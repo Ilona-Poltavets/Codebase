@@ -56,6 +56,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Projects::class);
     }
 
+    public function company(){
+        return $this->hasOne(Company::class);
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->roles->contains('name', $role);
@@ -67,5 +71,9 @@ class User extends Authenticatable
             }
         }
         return false;
+    }
+    public function hasCompany(int $company_id): bool
+    {
+        return $this->company->contains('id', $company_id);
     }
 }
