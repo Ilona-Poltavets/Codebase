@@ -59,7 +59,7 @@
 
             <p class="mt-6 text-center text-gray-600 dark:text-gray-400 text-sm">
                 Don't have an account?
-                <a href="{{ route('register') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Register</a>
+                <a href="" class="text-indigo-600 dark:text-indigo-400 hover:underline">Register</a>
             </p>
         </div>
     </div>
