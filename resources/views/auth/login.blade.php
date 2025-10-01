@@ -5,18 +5,19 @@
 @section('content')
     <div class="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 text-center mb-6">Login to Your Account</h2>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 text-center mb-6">Login</h2>
 
-            @if(session('status'))
-                <div class="bg-red-100 text-red-700 p-2 rounded mb-4">
+            <!-- Session Status -->
+            @if (session('status'))
+                <div class="bg-green-100 text-green-700 p-2 rounded mb-4">
                     {{ session('status') }}
                 </div>
             @endif
 
-            <form method="POST" action="" class="space-y-4">
+            <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
-                <!-- Email -->
+                <!-- Email Address -->
                 <div>
                     <label for="email" class="block text-gray-700 dark:text-gray-300">Email</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
@@ -44,7 +45,9 @@
                     </label>
 
                     @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm">Forgot Password?</a>
+                        <a href="{{ route('password.request') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm">
+                            Forgot Password?
+                        </a>
                     @endif
                 </div>
 
@@ -52,14 +55,14 @@
                 <div>
                     <button type="submit"
                             class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg font-semibold transition">
-                        Login
+                        {{ __('Log in') }}
                     </button>
                 </div>
             </form>
 
             <p class="mt-6 text-center text-gray-600 dark:text-gray-400 text-sm">
                 Don't have an account?
-                <a href="" class="text-indigo-600 dark:text-indigo-400 hover:underline">Register</a>
+                <a href="{{ route('register') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Register</a>
             </p>
         </div>
     </div>
