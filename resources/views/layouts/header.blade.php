@@ -13,7 +13,7 @@
                 🌙
             </button>
 
-            <a class="px-3 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-500 transition">Login</a>
+            <a href="{{route('login')}}" class="px-3 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-500 transition">Login</a>
         </div>
     </div>
 </header>
