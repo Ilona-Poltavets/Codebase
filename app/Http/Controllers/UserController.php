@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -78,13 +79,14 @@ class UserController extends Controller
      */
     public function edit(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('roles')->findOrFail($id);
+        $roles = Role::all(); // исправлено
 
         if ($request->wantsJson()) {
             return response()->json($user);
         }
 
-        return view('admin.user-edit', compact('user'));
+        return view('admin.user-edit', compact('user', 'roles'));
     }
 
     /**
