@@ -10,9 +10,15 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(User::with('roles', 'permissions')->get());
+        $users = User::with('roles')->paginate(10);
+
+        if ($request->wantsJson()) {
+            return response()->json($users);
+        }
+
+        return view('admin.users', compact('users'));
     }
 
     /**
@@ -46,18 +52,39 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        $user = User::with('roles', 'permissions')->findOrFail($id);
-        return response()->json($user);
+        $user = User::with('roles')->findOrFail($id);
+
+        $permissions=[];
+        foreach ($user->roles as $role){
+            foreach ($role->permissions as $permission){
+                array_push($permissions, $permission);
+            }
+        }
+
+        $permissions=array_unique($permissions);
+        $user['permissions']=$permissions;
+
+        if ($request->wantsJson()) {
+            return response()->json($user);
+        }
+
+        return view('admin.user-show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        if ($request->wantsJson()) {
+            return response()->json($user);
+        }
+
+        return view('admin.user-edit', compact('user'));
     }
 
     /**
@@ -70,26 +97,34 @@ class UserController extends Controller
         $request->validate([
             'name'     => 'sometimes|required|string',
             'email'    => 'sometimes|required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6'
+            'password' => 'nullable|min:6',
         ]);
 
         $user->update([
-            'name'     => $request->name ?? $user->name,
-            'email'    => $request->email ?? $user->email,
-            'password' => $request->password ? bcrypt($request->password) : $user->password,
+            'name'     => $request->input('name', $user->name),
+            'email'    => $request->input('email', $user->email),
+            'password' => $request->filled('password') ? bcrypt($request->password) : $user->password,
         ]);
 
-        return response()->json($user);
+        if ($request->wantsJson()) {
+            return response()->json($user);
+        }
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         $user = User::findOrFail($id);
         $user->delete();
 
-        return response()->json(null, 204);
+        if ($request->wantsJson()) {
+            return response()->json(null, 204);
+        }
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

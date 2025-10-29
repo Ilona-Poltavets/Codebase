@@ -37,12 +37,16 @@ class RegisteredUserController extends Controller
 
         logger($request);
 
+        // Создаем пользователя
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'full_name'=>$request->full_name,
+            'full_name' => $request->full_name,
         ]);
+
+        // Присваиваем роль по умолчанию (id = 5)
+        $user->roles()->attach(5);
 
         event(new Registered($user));
 
