@@ -49,33 +49,33 @@ class ProjectsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Projects $projects)
+    public function show(Projects $project)
     {
         if (request()->wantsJson()) {
-            return response()->json($projects->load('company'));
+            return response()->json($project->load('company'));
         }
 
-        return redirect()->route('admin.projects.edit', $projects);
+        return redirect()->route('admin.projects.edit', $project);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Projects $projects)
+    public function edit(Projects $project)
     {
         $companies = Company::orderBy('name')->get();
-        return view('admin.project-edit', compact('projects', 'companies'));
+        return view('admin.project-edit', compact('project', 'companies'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectsRequest $request, Projects $projects)
+    public function update(UpdateProjectsRequest $request, Projects $project)
     {
-        $projects->update($request->validated());
+        $project->update($request->validated());
 
         if ($request->wantsJson()) {
-            return response()->json($projects);
+            return response()->json($project);
         }
 
         return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
@@ -84,9 +84,9 @@ class ProjectsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Projects $projects)
+    public function destroy(Projects $project)
     {
-        $projects->delete();
+        $project->delete();
 
         if (request()->wantsJson()) {
             return response()->json(null, 204);

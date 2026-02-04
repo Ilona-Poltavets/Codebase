@@ -20,14 +20,14 @@
                             </p>
                         </header>
 
-                        <form method="post" action="{{ route('admin.projects.update', $projects->id) }}" class="mt-6 space-y-6">
+                        <form method="post" action="{{ route('admin.projects.update', $project->id) }}" class="mt-6 space-y-6">
                             @csrf
                             @method('PUT')
 
                             <div>
                                 <x-input-label for="name" :value="__('Project Name')" />
                                 <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
-                                              :value="old('name', $projects->name)" required autofocus />
+                                              :value="old('name', $project->name)" required autofocus />
                                 <x-input-error class="mt-2" :messages="$errors->get('name')" />
                             </div>
 
@@ -35,7 +35,7 @@
                                 <x-input-label for="description" :value="__('Description')" />
                                 <textarea id="description" name="description"
                                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                          rows="4">{{ old('description', $projects->description) }}</textarea>
+                                          rows="4">{{ old('description', $project->description) }}</textarea>
                                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
                             </div>
 
@@ -47,7 +47,7 @@
                                     <option value="">{{ __('Select a company') }}</option>
                                     @foreach($companies as $company)
                                         <option value="{{ $company->id }}"
-                                            {{ (int) old('company_id', $projects->company_id) === $company->id ? 'selected' : '' }}>
+                                            {{ (int) old('company_id', $project->company_id) === $company->id ? 'selected' : '' }}>
                                             {{ $company->name }}
                                         </option>
                                     @endforeach
