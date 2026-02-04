@@ -55,7 +55,7 @@
 
                 @if(!isset($invite) || ! $invite)
                     <!-- Company fields for owner -->
-                    <div>
+                    <div data-owner-fields>
                         <label for="company_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Company name (for owner)</label>
                         <input id="company_name" name="company_name" type="text" value="{{ old('company_name') }}"
                                class="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-gray-100">
@@ -64,7 +64,7 @@
                         @enderror
                     </div>
 
-                    <div>
+                    <div data-owner-fields>
                         <label for="company_domain" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Company domain (optional)</label>
                         <input id="company_domain" name="company_domain" type="text" value="{{ old('company_domain') }}"
                                class="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-gray-100">
@@ -73,7 +73,7 @@
                         @enderror
                     </div>
 
-                    <div>
+                    <div data-owner-fields>
                         <label for="company_plan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Company plan</label>
                         <select id="company_plan" name="company_plan"
                                 class="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-gray-100">
@@ -133,4 +133,20 @@
             </form>
         </div>
     </div>
+    @if(!isset($invite) || ! $invite)
+        <script>
+            (function () {
+                const ownerFields = document.querySelectorAll('[data-owner-fields]');
+                const radios = document.querySelectorAll('input[name="register_type"]');
+                const toggle = () => {
+                    const value = document.querySelector('input[name="register_type"]:checked')?.value;
+                    ownerFields.forEach(el => {
+                        el.style.display = value === 'owner' ? '' : 'none';
+                    });
+                };
+                radios.forEach(r => r.addEventListener('change', toggle));
+                toggle();
+            })();
+        </script>
+    @endif
 @endsection

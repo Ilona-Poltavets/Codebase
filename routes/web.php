@@ -20,16 +20,16 @@ Route::get('/dashboard', function () {
 //    ->middleware(['auth', 'verified'])
 //    ->name('users');
 Route::resource('companies', CompanyController::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'admin'])
     ->names('admin.companies')
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 Route::resource('roles', RoleController::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'admin'])
     ->names('admin.roles')
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
 Route::resource('permissions', PermissionController::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'admin'])
     ->names('admin.permissions')
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 Route::resource('projects', ProjectsController::class)
@@ -38,10 +38,10 @@ Route::resource('projects', ProjectsController::class)
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
 Route::get('invites/create', [InviteController::class, 'create'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'admin'])
     ->name('admin.invites.create');
 Route::post('invites', [InviteController::class, 'store'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'admin'])
     ->name('admin.invites.store');
 
 Route::get('invite/{token}', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])
