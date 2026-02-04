@@ -14,21 +14,23 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         $adminEmail = env('ADMIN_EMAIL', 'admin@example.com');
-        $admin = User::where('email', $adminEmail)->first();
+        $admin = User::where('email', $adminEmail)->first() ?? User::first();
+
+        if (! $admin) {
+            return;
+        }
 
         $company = Company::updateOrCreate(
             ['name' => 'Test Company'],
             [
                 'description' => 'Test company for demo data.',
                 'domain' => 'test-company',
-                'owner_id' => $admin?->id,
+                'owner_id' => $admin->id,
                 'plan' => 'free',
             ]
         );
 
-        if ($admin) {
-            $admin->company_id = $company->id;
-            $admin->save();
-        }
+        $admin->company_id = $company->id;
+        $admin->save();
     }
 }

@@ -19,6 +19,9 @@ class PermissionRoleSeeder extends Seeder
 
         $rolePermissions = [
             'admin' => array_values($permissions->toArray()),
+            'member' => [
+                $permissions['view_project'],
+            ],
             'owner' => [
                 $permissions['manage_companies'],
                 $permissions['invite_users'],

@@ -31,6 +31,13 @@
                             </div>
 
                             <div>
+                                <x-input-label for="domain" :value="__('Domain')" />
+                                <x-text-input id="domain" name="domain" type="text" class="mt-1 block w-full"
+                                              :value="old('domain')" required />
+                                <x-input-error class="mt-2" :messages="$errors->get('domain')" />
+                            </div>
+
+                            <div>
                                 <x-input-label for="description" :value="__('Description')" />
                                 <textarea id="description" name="description"
                                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -39,17 +46,28 @@
                             </div>
 
                             <div>
-                                <x-input-label for="user_id" :value="__('Assign User')" />
-                                <select id="user_id" name="user_id"
+                                <x-input-label for="owner_id" :value="__('Owner')" />
+                                <select id="owner_id" name="owner_id"
                                         class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">{{ __('No user') }}</option>
+                                    <option value="">{{ __('Select owner') }}</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                        <option value="{{ $user->id }}" {{ old('owner_id') == $user->id ? 'selected' : '' }}>
                                             {{ $user->name }} ({{ $user->email }})
                                         </option>
                                     @endforeach
                                 </select>
-                                <x-input-error class="mt-2" :messages="$errors->get('user_id')" />
+                                <x-input-error class="mt-2" :messages="$errors->get('owner_id')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="plan" :value="__('Plan')" />
+                                <select id="plan" name="plan"
+                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="free" {{ old('plan') === 'free' ? 'selected' : '' }}>free</option>
+                                    <option value="pro" {{ old('plan') === 'pro' ? 'selected' : '' }}>pro</option>
+                                    <option value="pro_enterprise" {{ old('plan') === 'pro_enterprise' ? 'selected' : '' }}>pro_enterprise</option>
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('plan')" />
                             </div>
 
                             <div class="flex items-center gap-4">

@@ -37,11 +37,9 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        $company = Company::create($request->only('name', 'description'));
+        $company = Company::create($request->only('name', 'description', 'domain', 'owner_id', 'plan'));
 
-        if ($request->filled('user_id')) {
-            User::whereKey($request->user_id)->update(['company_id' => $company->id]);
-        }
+        User::whereKey($request->owner_id)->update(['company_id' => $company->id]);
 
         if ($request->wantsJson()) {
             return response()->json($company, 201);
@@ -76,11 +74,9 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        $company->update($request->only('name', 'description'));
+        $company->update($request->only('name', 'description', 'domain', 'owner_id', 'plan'));
 
-        if ($request->filled('user_id')) {
-            User::whereKey($request->user_id)->update(['company_id' => $company->id]);
-        }
+        User::whereKey($request->owner_id)->update(['company_id' => $company->id]);
 
         if ($request->wantsJson()) {
             return response()->json($company);

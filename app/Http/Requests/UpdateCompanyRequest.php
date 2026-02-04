@@ -25,7 +25,9 @@ class UpdateCompanyRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('companies', 'name')->ignore($this->route('company'))],
             'description' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
+            'domain' => 'required|string|max:255',
+            'owner_id' => 'required|exists:users,id',
+            'plan' => 'required|in:free,pro,pro_enterprise',
         ];
     }
 }

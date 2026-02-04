@@ -13,11 +13,19 @@ class Company extends Model
     protected $fillable = [
         'name',
         'description',
+        'domain',
+        'owner_id',
+        'plan',
     ];
 
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function projects()

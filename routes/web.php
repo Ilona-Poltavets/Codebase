@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectsController;
@@ -35,6 +36,16 @@ Route::resource('projects', ProjectsController::class)
     ->middleware(['auth', 'verified'])
     ->names('admin.projects')
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+Route::get('invites/create', [InviteController::class, 'create'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.invites.create');
+Route::post('invites', [InviteController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.invites.store');
+
+Route::get('invite/{token}', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])
+    ->name('invite.accept');
 
 Route::resource('users', UserController::class)
     ->middleware(['auth', 'verified'])
