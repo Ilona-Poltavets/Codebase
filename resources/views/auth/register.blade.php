@@ -92,6 +92,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
                     <input id="email" name="email" type="email"
                            value="{{ old('email', isset($invite) && $invite ? $invite->email : '') }}" required
+                           {{ (isset($invite) && $invite) ? 'readonly' : '' }}
                            class="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-gray-100">
                     @error('email')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

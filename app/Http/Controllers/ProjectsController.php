@@ -33,7 +33,7 @@ class ProjectsController extends Controller
     public function create()
     {
         $companies = Company::orderBy('name')->get();
-        if (! request()->user()->hasRole('admin')) {
+        if (request()->user()->hasRole('owner') || request()->user()->hasRole('manager')) {
             $companies = $companies->where('id', request()->user()->company_id);
         }
         return view('admin.project-create', compact('companies'));
@@ -45,7 +45,7 @@ class ProjectsController extends Controller
     public function store(StoreProjectsRequest $request)
     {
         $data = $request->validated();
-        if (! $request->user()->hasRole('admin')) {
+        if ($request->user()->hasRole('owner') || $request->user()->hasRole('manager')) {
             $data['company_id'] = $request->user()->company_id;
         }
         $project = Projects::create($data);
@@ -81,7 +81,7 @@ class ProjectsController extends Controller
             abort(403);
         }
         $companies = Company::orderBy('name')->get();
-        if (! request()->user()->hasRole('admin')) {
+        if (request()->user()->hasRole('owner') || request()->user()->hasRole('manager')) {
             $companies = $companies->where('id', request()->user()->company_id);
         }
         return view('admin.project-edit', compact('project', 'companies'));
@@ -96,7 +96,7 @@ class ProjectsController extends Controller
             abort(403);
         }
         $data = $request->validated();
-        if (! $request->user()->hasRole('admin')) {
+        if ($request->user()->hasRole('owner') || $request->user()->hasRole('manager')) {
             $data['company_id'] = $request->user()->company_id;
         }
         $project->update($data);

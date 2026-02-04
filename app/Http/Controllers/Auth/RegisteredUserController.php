@@ -12,7 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -91,7 +90,7 @@ class RegisteredUserController extends Controller
                 return back()->withErrors(['company_name' => 'Company name is required for owner registration.'])->withInput();
             }
 
-            $domain = $request->input('company_domain') ?: Str::slug($companyName);
+            $domain = Company::normalizeDomain($request->input('company_domain'), $companyName);
             $plan = $request->input('company_plan', 'free');
 
             $company = Company::create([

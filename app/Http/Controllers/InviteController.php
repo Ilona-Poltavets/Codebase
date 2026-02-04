@@ -12,7 +12,13 @@ class InviteController extends Controller
 {
     public function create()
     {
+        if (request()->user()->hasRole('owner') && ! request()->user()->company_id) {
+            abort(403);
+        }
         $companies = Company::orderBy('name')->get();
+        if (request()->user()->hasRole('owner')) {
+            $companies = $companies->where('id', request()->user()->company_id);
+        }
         $roles = Role::orderBy('name')->get();
 
         return view('admin.invite-create', compact('companies', 'roles'));
@@ -25,6 +31,13 @@ class InviteController extends Controller
             'company_id' => 'required|exists:companies,id',
             'role_id' => 'required|exists:roles,id',
         ]);
+
+        if ($request->user()->hasRole('owner')) {
+            if (! $request->user()->company_id) {
+                abort(403);
+            }
+            $request->merge(['company_id' => $request->user()->company_id]);
+        }
 
         $invite = Invite::create([
             'email' => $request->email,

@@ -20,11 +20,13 @@ class CompanySeeder extends Seeder
             return;
         }
 
+        $domain = Company::normalizeDomain('test-company', 'Test Company');
+
         $company = Company::updateOrCreate(
             ['name' => 'Test Company'],
             [
                 'description' => 'Test company for demo data.',
-                'domain' => 'test-company',
+                'domain' => $domain,
                 'owner_id' => $admin->id,
                 'plan' => 'free',
             ]

@@ -6,6 +6,8 @@ use App\Models\Company;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
@@ -37,7 +39,15 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        $company = Company::create($request->only('name', 'description', 'domain', 'owner_id', 'plan'));
+        $domain = Company::normalizeDomain($request->domain, $request->name);
+
+        $company = Company::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'domain' => $domain,
+            'owner_id' => $request->owner_id,
+            'plan' => $request->plan,
+        ]);
 
         User::whereKey($request->owner_id)->update(['company_id' => $company->id]);
 
@@ -74,7 +84,15 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        $company->update($request->only('name', 'description', 'domain', 'owner_id', 'plan'));
+        $domain = Company::normalizeDomain($request->domain, $request->name);
+
+        $company->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'domain' => $domain,
+            'owner_id' => $request->owner_id,
+            'plan' => $request->plan,
+        ]);
 
         User::whereKey($request->owner_id)->update(['company_id' => $company->id]);
 
@@ -97,5 +115,27 @@ class CompanyController extends Controller
         }
 
         return redirect()->route('admin.companies.index')->with('success', 'Company deleted successfully.');
+    }
+
+    public function updateOwn(Request $request)
+    {
+        $user = $request->user();
+        if (! $user->hasRole('owner') || ! $user->company_id) {
+            abort(403);
+        }
+
+        $company = Company::findOrFail($user->company_id);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255', Rule::unique('companies', 'name')->ignore($company->id)],
+            'description' => ['nullable', 'string'],
+            'domain' => ['required', 'string', 'max:255'],
+            'plan' => ['required', 'in:free,pro,pro_enterprise'],
+        ]);
+
+        $data['domain'] = Company::normalizeDomain($data['domain'], $data['name']);
+        $company->update($data);
+
+        return redirect()->route('profile.edit')->with('status', 'company-updated');
     }
 }

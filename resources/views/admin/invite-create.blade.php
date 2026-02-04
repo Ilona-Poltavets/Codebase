@@ -36,20 +36,24 @@
                                 <x-input-error class="mt-2" :messages="$errors->get('email')" />
                             </div>
 
-                            <div>
-                                <x-input-label for="company_id" :value="__('Company')" />
-                                <select id="company_id" name="company_id"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        required>
-                                    <option value="">{{ __('Select a company') }}</option>
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
-                                            {{ $company->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error class="mt-2" :messages="$errors->get('company_id')" />
-                            </div>
+                            @if(Auth::user()?->hasRole('owner'))
+                                <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
+                            @else
+                                <div>
+                                    <x-input-label for="company_id" :value="__('Company')" />
+                                    <select id="company_id" name="company_id"
+                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                            required>
+                                        <option value="">{{ __('Select a company') }}</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
+                                                {{ $company->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error class="mt-2" :messages="$errors->get('company_id')" />
+                                </div>
+                            @endif
 
                             <div>
                                 <x-input-label for="role_id" :value="__('Role')" />

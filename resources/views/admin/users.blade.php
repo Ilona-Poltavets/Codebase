@@ -45,10 +45,17 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Users') }}
             </h2>
-            <a href="{{ route('admin.users.create') }}"
-               class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-500">
-                Add User
-            </a>
+            @if(Auth::user()?->hasRole('admin'))
+                <a href="{{ route('admin.users.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-500">
+                    Add User
+                </a>
+            @elseif(Auth::user()?->hasRole('owner'))
+                <a href="{{ route('admin.invites.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-500">
+                    Invite User
+                </a>
+            @endif
         </div>
     </x-slot>
 

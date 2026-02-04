@@ -38,10 +38,10 @@ Route::resource('projects', ProjectsController::class)
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
 Route::get('invites/create', [InviteController::class, 'create'])
-    ->middleware(['auth', 'verified', 'admin'])
+    ->middleware(['auth', 'verified', 'admin_or_owner'])
     ->name('admin.invites.create');
 Route::post('invites', [InviteController::class, 'store'])
-    ->middleware(['auth', 'verified', 'admin'])
+    ->middleware(['auth', 'verified', 'admin_or_owner'])
     ->name('admin.invites.store');
 
 Route::get('invite/{token}', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])
@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/company', [CompanyController::class, 'updateOwn'])->name('company.update');
 });
 
 require __DIR__.'/auth.php';
