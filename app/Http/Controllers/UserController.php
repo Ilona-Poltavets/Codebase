@@ -13,7 +13,11 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::with('roles')->paginate(10);
+        $query = User::with('roles')->orderBy('id');
+        if (! $request->user()->hasRole('admin')) {
+            $query->where('company_id', $request->user()->company_id);
+        }
+        $users = $query->paginate(10);
 
         if ($request->wantsJson()) {
             return response()->json($users);
@@ -68,6 +72,12 @@ class UserController extends Controller
     public function show(Request $request, string $id)
     {
         $user = User::with('roles')->findOrFail($id);
+        if (! $request->user()->hasRole('admin') && $user->company_id !== $request->user()->company_id) {
+            abort(403);
+        }
+        if (! $request->user()->hasRole('admin') && $user->company_id !== $request->user()->company_id) {
+            abort(403);
+        }
 
         $permissions=[];
         foreach ($user->roles as $role){
@@ -107,6 +117,12 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+        if (! $request->user()->hasRole('admin') && $user->company_id !== $request->user()->company_id) {
+            abort(403);
+        }
+        if (! $request->user()->hasRole('admin') && $user->company_id !== $request->user()->company_id) {
+            abort(403);
+        }
 
         $request->validate([
             'name'     => 'sometimes|required|string',
