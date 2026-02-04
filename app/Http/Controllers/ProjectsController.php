@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Projects;
 use App\Http\Requests\StoreProjectsRequest;
 use App\Http\Requests\UpdateProjectsRequest;
+use App\Models\Company;
 
 class ProjectsController extends Controller
 {
@@ -13,7 +14,13 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        //
+        $projects = Projects::with('company')->orderBy('id')->paginate(10);
+
+        if (request()->wantsJson()) {
+            return response()->json($projects);
+        }
+
+        return view('admin.projects', compact('projects'));
     }
 
     /**
@@ -21,7 +28,8 @@ class ProjectsController extends Controller
      */
     public function create()
     {
-        //
+        $companies = Company::orderBy('name')->get();
+        return view('admin.project-create', compact('companies'));
     }
 
     /**
@@ -29,7 +37,13 @@ class ProjectsController extends Controller
      */
     public function store(StoreProjectsRequest $request)
     {
-        //
+        $project = Projects::create($request->validated());
+
+        if ($request->wantsJson()) {
+            return response()->json($project, 201);
+        }
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project created successfully.');
     }
 
     /**
@@ -37,7 +51,11 @@ class ProjectsController extends Controller
      */
     public function show(Projects $projects)
     {
-        //
+        if (request()->wantsJson()) {
+            return response()->json($projects->load('company'));
+        }
+
+        return redirect()->route('admin.projects.edit', $projects);
     }
 
     /**
@@ -45,7 +63,8 @@ class ProjectsController extends Controller
      */
     public function edit(Projects $projects)
     {
-        //
+        $companies = Company::orderBy('name')->get();
+        return view('admin.project-edit', compact('projects', 'companies'));
     }
 
     /**
@@ -53,7 +72,13 @@ class ProjectsController extends Controller
      */
     public function update(UpdateProjectsRequest $request, Projects $projects)
     {
-        //
+        $projects->update($request->validated());
+
+        if ($request->wantsJson()) {
+            return response()->json($projects);
+        }
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
     }
 
     /**
@@ -61,6 +86,12 @@ class ProjectsController extends Controller
      */
     public function destroy(Projects $projects)
     {
-        //
+        $projects->delete();
+
+        if (request()->wantsJson()) {
+            return response()->json(null, 204);
+        }
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
     }
 }

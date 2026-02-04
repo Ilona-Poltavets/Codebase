@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Company;
+use App\Models\Projects;
 use Illuminate\Database\Seeder;
 
 class ProjectsSeeder extends Seeder
@@ -12,6 +13,14 @@ class ProjectsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $company = Company::where('name', 'Test Company')->first();
+        if (! $company) {
+            return;
+        }
+
+        Projects::updateOrCreate(
+            ['name' => 'Test Project', 'company_id' => $company->id],
+            ['description' => 'Test project for demo data.']
+        );
     }
 }

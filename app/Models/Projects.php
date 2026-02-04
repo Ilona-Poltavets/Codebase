@@ -10,9 +10,18 @@ class Projects extends Model
     /** @use HasFactory<\Database\Factories\ProjectsFactory> */
     use HasFactory;
 
-    protected $fillable=['name'];
+    protected $fillable = [
+        'name',
+        'description',
+        'company_id',
+    ];
 
     public function users(){
         return $this->belongsToMany(User::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }
