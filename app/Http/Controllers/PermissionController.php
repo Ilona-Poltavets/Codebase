@@ -9,7 +9,18 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        return response()->json(Permission::all());
+        $permissions = Permission::orderBy('id')->get();
+
+        if (request()->wantsJson()) {
+            return response()->json($permissions);
+        }
+
+        return view('admin.permissions', compact('permissions'));
+    }
+
+    public function create()
+    {
+        return view('admin.permission-create');
     }
 
     public function store(Request $request)
@@ -19,13 +30,29 @@ class PermissionController extends Controller
         ]);
 
         $permission = Permission::create($request->only('name'));
-        return response()->json($permission, 201);
+
+        if ($request->wantsJson()) {
+            return response()->json($permission, 201);
+        }
+
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
 
     public function show($id)
     {
         $permission = Permission::findOrFail($id);
-        return response()->json($permission);
+
+        if (request()->wantsJson()) {
+            return response()->json($permission);
+        }
+
+        return redirect()->route('admin.permissions.edit', $permission);
+    }
+
+    public function edit($id)
+    {
+        $permission = Permission::findOrFail($id);
+        return view('admin.permission-edit', compact('permission'));
     }
 
     public function update(Request $request, $id)
@@ -36,7 +63,12 @@ class PermissionController extends Controller
         ]);
 
         $permission->update($request->only('name'));
-        return response()->json($permission);
+
+        if ($request->wantsJson()) {
+            return response()->json($permission);
+        }
+
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
     }
 
     public function destroy($id)
@@ -44,6 +76,10 @@ class PermissionController extends Controller
         $permission = Permission::findOrFail($id);
         $permission->delete();
 
-        return response()->json(null, 204);
+        if (request()->wantsJson()) {
+            return response()->json(null, 204);
+        }
+
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission deleted successfully.');
     }
 }

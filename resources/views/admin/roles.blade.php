@@ -1,35 +1,90 @@
-@extends('layouts.admin')
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Roles') }}
+            </h2>
+            <a href="{{ route('admin.roles.create') }}"
+               class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-500">
+                Add Role
+            </a>
+        </div>
+    </x-slot>
 
-@section('title', 'Roles Management')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    @if(session('success'))
+                        <div class="mb-4 rounded bg-green-50 px-4 py-2 text-green-700">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="mb-4 rounded bg-red-50 px-4 py-2 text-red-700">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
-@section('content')
-    <h2 class="text-xl font-bold mb-4">Roles</h2>
+                    <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-900">
+                        <thead>
+                        <tr>
+                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">ID</th>
+                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Name</th>
+                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($roles as $role)
+                            <tr>
+                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $role->id }}</td>
+                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $role->name }}</td>
+                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2 text-center">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <a href="{{ route('admin.roles.edit', $role->id) }}"
+                                           class="text-green-500 hover:text-green-700" title="Edit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M11 4h2m2 0h2m-6 0h2m4 0h2m-6 0h2m-6 0h2M4 20h16M4 4h16v16H4V4zm10 4l2 2-8 8H6v-2l8-8z" />
+                                            </svg>
+                                        </a>
 
-    <a href="{{ route('admin.roles.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500">Add Role</a>
-
-    <table class="min-w-full mt-4 bg-white rounded shadow overflow-hidden">
-        <thead class="bg-gray-200">
-        <tr>
-            <th class="px-4 py-2">ID</th>
-            <th class="px-4 py-2">Name</th>
-            <th class="px-4 py-2">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($roles as $role)
-            <tr class="border-t">
-                <td class="px-4 py-2">{{ $role->id }}</td>
-                <td class="px-4 py-2">{{ $role->name }}</td>
-                <td class="px-4 py-2 flex gap-2">
-                    <a href="{{ route('admin.roles.edit', $role) }}" class="text-blue-600 hover:underline">Edit</a>
-                    <form action="{{ route('admin.roles.destroy', $role) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:underline">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-@endsection
+                                        @if($role->name !== 'admin')
+                                            <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST"
+                                                  onsubmit="return confirm('Are you sure you want to delete this role?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                                         viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                              stroke-width="2"
+                                                              d="M19 7l-.867 12.142A2 2 0 0116.138
+                                                                  21H7.862a2 2 0 01-1.995-1.858L5
+                                                                  7m5 4v6m4-6v6m1-10V4a1 1 0
+                                                                  00-1-1h-4a1 1 0 00-1
+                                                                  1v3m-4 0h14" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-gray-400" title="Admin role cannot be deleted">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                                     viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M18.364 5.636l-12.728 12.728M12 3v9m0 9v-4" />
+                                                </svg>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

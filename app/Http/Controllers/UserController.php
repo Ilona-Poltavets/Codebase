@@ -27,7 +27,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::orderBy('name')->get();
+        return view('admin.user-create', compact('roles'));
     }
 
     /**
@@ -37,17 +38,28 @@ class UserController extends Controller
     {
         $request->validate([
             'name'     => 'required|string',
+            'full_name'=> 'required|string',
             'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
+            'role_id'  => 'nullable|exists:roles,id',
         ]);
 
         $user = User::create([
             'name'     => $request->name,
+            'full_name'=> $request->full_name,
             'email'    => $request->email,
             'password' => bcrypt($request->password),
         ]);
 
-        return response()->json($user, 201);
+        if ($request->filled('role_id')) {
+            $user->roles()->sync([$request->role_id]);
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json($user, 201);
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -98,21 +110,28 @@ class UserController extends Controller
 
         $request->validate([
             'name'     => 'sometimes|required|string',
+            'full_name'=> 'sometimes|required|string',
             'email'    => 'sometimes|required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6',
+            'role_id'  => 'nullable|exists:roles,id',
         ]);
 
         $user->update([
             'name'     => $request->input('name', $user->name),
+            'full_name'=> $request->input('full_name', $user->full_name),
             'email'    => $request->input('email', $user->email),
             'password' => $request->filled('password') ? bcrypt($request->password) : $user->password,
         ]);
+
+        if ($request->filled('role_id')) {
+            $user->roles()->sync([$request->role_id]);
+        }
 
         if ($request->wantsJson()) {
             return response()->json($user);
         }
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -127,6 +146,6 @@ class UserController extends Controller
             return response()->json(null, 204);
         }
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }

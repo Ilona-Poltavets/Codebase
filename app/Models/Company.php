@@ -9,4 +9,19 @@ class Company extends Model
 {
     /** @use HasFactory<\Database\Factories\CompanyFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Projects::class);
+    }
 }

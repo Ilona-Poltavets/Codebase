@@ -1,35 +1,75 @@
-@extends('layouts.admin')
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Permissions') }}
+            </h2>
+            <a href="{{ route('admin.permissions.create') }}"
+               class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-500">
+                Add Permission
+            </a>
+        </div>
+    </x-slot>
 
-@section('title', 'Permissions Management')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    @if(session('success'))
+                        <div class="mb-4 rounded bg-green-50 px-4 py-2 text-green-700">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-@section('content')
-    <h2 class="text-xl font-bold mb-4">Permissions</h2>
+                    <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-900">
+                        <thead>
+                        <tr>
+                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">ID</th>
+                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Name</th>
+                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($permissions as $permission)
+                            <tr>
+                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $permission->id }}</td>
+                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $permission->name }}</td>
+                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2 text-center">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <a href="{{ route('admin.permissions.edit', $permission->id) }}"
+                                           class="text-green-500 hover:text-green-700" title="Edit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M11 4h2m2 0h2m-6 0h2m4 0h2m-6 0h2m-6 0h2M4 20h16M4 4h16v16H4V4zm10 4l2 2-8 8H6v-2l8-8z" />
+                                            </svg>
+                                        </a>
 
-    <a href="{{ route('admin.permissions.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500">Add Permission</a>
-
-    <table class="min-w-full mt-4 bg-white rounded shadow overflow-hidden">
-        <thead class="bg-gray-200">
-        <tr>
-            <th class="px-4 py-2">ID</th>
-            <th class="px-4 py-2">Name</th>
-            <th class="px-4 py-2">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($permissions as $permission)
-            <tr class="border-t">
-                <td class="px-4 py-2">{{ $permission->id }}</td>
-                <td class="px-4 py-2">{{ $permission->name }}</td>
-                <td class="px-4 py-2 flex gap-2">
-                    <a href="{{ route('admin.permissions.edit', $permission) }}" class="text-blue-600 hover:underline">Edit</a>
-                    <form action="{{ route('admin.permissions.destroy', $permission) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:underline">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-@endsection
+                                        <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST"
+                                              onsubmit="return confirm('Are you sure you want to delete this permission?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                                     viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2"
+                                                          d="M19 7l-.867 12.142A2 2 0 0116.138
+                                                              21H7.862a2 2 0 01-1.995-1.858L5
+                                                              7m5 4v6m4-6v6m1-10V4a1 1 0
+                                                              00-1-1h-4a1 1 0 00-1
+                                                              1v3m-4 0h14" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

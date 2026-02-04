@@ -15,14 +15,17 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                         {{ __('Users') }}
                     </x-nav-link>
                     <x-nav-link :href="route('companies')" :active="request()->routeIs('companies')">
                         {{ __('Companies') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('roles')" :active="request()->routeIs('roles')">
+                    <x-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
                         {{ __('Roles') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.permissions.index')" :active="request()->routeIs('admin.permissions.*')">
+                        {{ __('Permissions') }}
                     </x-nav-link>
                     <x-nav-link :href="route('projects')" :active="request()->routeIs('projects')">
                         {{ __('Projects') }}
@@ -84,6 +87,21 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                {{ __('Users') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('companies')" :active="request()->routeIs('companies')">
+                {{ __('Companies') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
+                {{ __('Roles') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.permissions.index')" :active="request()->routeIs('admin.permissions.*')">
+                {{ __('Permissions') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('projects')" :active="request()->routeIs('projects')">
+                {{ __('Projects') }}
             </x-responsive-nav-link>
         </div>
 

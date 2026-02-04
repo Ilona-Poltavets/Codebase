@@ -41,9 +41,15 @@
 {{--@endsection--}}
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Users') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Users') }}
+            </h2>
+            <a href="{{ route('admin.users.create') }}"
+               class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-500">
+                Add User
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -68,7 +74,7 @@
                                 <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $user->created_at ? $user->created_at->format('Y-m-d') : '-' }}</td>
                                 <td class="border border-gray-300 dark:border-gray-900 px-4 py-2 text-center">
                                     <div class="flex items-center justify-center gap-3">
-                                        <a href="{{ route('users.show', $user->id) }}"
+                                        <a href="{{ route('admin.users.show', $user->id) }}"
                                            class="text-blue-500 hover:text-blue-700" title="View">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -81,7 +87,7 @@
                                             </svg>
                                         </a>
 
-                                        <a href="{{ route('users.edit', $user->id) }}"
+                                        <a href="{{ route('admin.users.edit', $user->id) }}"
                                            class="text-green-500 hover:text-green-700" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +96,7 @@
                                             </svg>
                                         </a>
 
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
                                               onsubmit="return confirm('Are you sure you want to delete this user?');">
                                             @csrf
                                             @method('DELETE')

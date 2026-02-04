@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight">
-            {{ __('Edit User') }}
+            {{ __('Create User') }}
         </h2>
     </x-slot>
 
@@ -16,39 +16,38 @@
                             </h2>
 
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                {{ __('Update user profile data and role.') }}
+                                {{ __('Create a new user and assign a role.') }}
                             </p>
                         </header>
 
-                        <form method="post" action="{{ route('admin.users.update', $user->id) }}" class="mt-6 space-y-6">
+                        <form method="post" action="{{ route('admin.users.store') }}" class="mt-6 space-y-6">
                             @csrf
-                            @method('PUT')
 
                             <div>
                                 <x-input-label for="name" :value="__('Name')" />
                                 <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
-                                              :value="old('name', $user->name)" required autofocus autocomplete="name" />
+                                              :value="old('name')" required autofocus autocomplete="name" />
                                 <x-input-error class="mt-2" :messages="$errors->get('name')" />
                             </div>
 
                             <div>
                                 <x-input-label for="full_name" :value="__('Full Name')" />
                                 <x-text-input id="full_name" name="full_name" type="text" class="mt-1 block w-full"
-                                              :value="old('full_name', $user->full_name)" required autocomplete="name" />
+                                              :value="old('full_name')" required autocomplete="name" />
                                 <x-input-error class="mt-2" :messages="$errors->get('full_name')" />
                             </div>
 
                             <div>
                                 <x-input-label for="email" :value="__('Email')" />
                                 <x-text-input id="email" name="email" type="email" class="mt-1 block w-full"
-                                              :value="old('email', $user->email)" required autocomplete="username" />
+                                              :value="old('email')" required autocomplete="username" />
                                 <x-input-error class="mt-2" :messages="$errors->get('email')" />
                             </div>
 
                             <div>
-                                <x-input-label for="password" :value="__('Password (optional)')" />
+                                <x-input-label for="password" :value="__('Password')" />
                                 <x-text-input id="password" name="password" type="password" class="mt-1 block w-full"
-                                              autocomplete="new-password" />
+                                              required autocomplete="new-password" />
                                 <x-input-error class="mt-2" :messages="$errors->get('password')" />
                             </div>
 
@@ -58,8 +57,7 @@
                                         class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">{{ __('No role') }}</option>
                                     @foreach($roles as $role)
-                                        <option value="{{ $role->id }}"
-                                            {{ (int) old('role_id', $user->roles->first()?->id) === $role->id ? 'selected' : '' }}>
+                                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
                                             {{ $role->name }}
                                         </option>
                                     @endforeach
@@ -68,8 +66,8 @@
                             </div>
 
                             <div class="flex items-center gap-4">
-                                <x-primary-button>{{ __('Save') }}</x-primary-button>
-                                <a href="{{ route('admin.users.show', $user->id) }}" class="text-sm text-gray-600 hover:text-gray-900">
+                                <x-primary-button>{{ __('Create') }}</x-primary-button>
+                                <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
                                     {{ __('Cancel') }}
                                 </a>
                             </div>

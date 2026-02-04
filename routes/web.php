@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,14 +19,22 @@ Route::get('/dashboard', function () {
 Route::get('/companies', function () {
     return view('admin.companies');
 })->middleware(['auth', 'verified'])->name('companies');
-Route::get('/roles', function () {
-    return view('admin.roles');
-})->middleware(['auth', 'verified'])->name('roles');
+Route::resource('roles', RoleController::class)
+    ->middleware(['auth', 'verified'])
+    ->names('admin.roles')
+    ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+Route::resource('permissions', PermissionController::class)
+    ->middleware(['auth', 'verified'])
+    ->names('admin.permissions')
+    ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 Route::get('/projects', function () {
     return view('admin.projects');
 })->middleware(['auth', 'verified'])->name('projects');
 
-Route::resource('users', UserController::class)->middleware(['auth', 'verified']);
+Route::resource('users', UserController::class)
+    ->middleware(['auth', 'verified'])
+    ->names('admin.users');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

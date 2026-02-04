@@ -33,12 +33,12 @@
                 </div>
 
                 <div class="flex gap-3">
-                    <a href="{{ route('users.edit', $user->id) }}"
+                    <a href="{{ route('admin.users.edit', $user->id) }}"
                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">
                         Edit
                     </a>
 
-                    <a href="{{ route('users.index') }}"
+                    <a href="{{ route('admin.users.index') }}"
                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow">
                         Back
                     </a>
