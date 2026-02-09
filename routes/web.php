@@ -35,7 +35,45 @@ Route::resource('permissions', PermissionController::class)
 Route::resource('projects', ProjectsController::class)
     ->middleware(['auth', 'verified'])
     ->names('admin.projects')
-    ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
+
+Route::get('projects/{project}/overview', [ProjectsController::class, 'overview'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.overview');
+Route::get('projects/{project}/tickets', [\App\Http\Controllers\TicketController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets');
+Route::get('projects/{project}/tickets/create', [\App\Http\Controllers\TicketController::class, 'create'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets.create');
+Route::post('projects/{project}/tickets', [\App\Http\Controllers\TicketController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets.store');
+Route::get('projects/{project}/tickets/{ticket}', [\App\Http\Controllers\TicketController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets.show');
+Route::put('projects/{project}/tickets/{ticket}', [\App\Http\Controllers\TicketController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets.update');
+Route::post('projects/{project}/tickets/{ticket}/comments', [\App\Http\Controllers\TicketCommentController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets.comments.store');
+
+Route::get('ticket-settings', [\App\Http\Controllers\TicketSettingsController::class, 'index'])
+    ->middleware(['auth', 'verified', 'admin_or_owner'])
+    ->name('tickets.settings');
+Route::post('ticket-settings/{type}', [\App\Http\Controllers\TicketSettingsController::class, 'store'])
+    ->middleware(['auth', 'verified', 'admin_or_owner'])
+    ->name('tickets.settings.store');
+Route::delete('ticket-settings/{type}/{id}', [\App\Http\Controllers\TicketSettingsController::class, 'destroy'])
+    ->middleware(['auth', 'verified', 'admin_or_owner'])
+    ->name('tickets.settings.destroy');
+Route::get('projects/{project}/files', [ProjectsController::class, 'files'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files');
+Route::get('projects/{project}/time', [ProjectsController::class, 'time'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.time');
 
 Route::get('invites/create', [InviteController::class, 'create'])
     ->middleware(['auth', 'verified', 'admin_or_owner'])

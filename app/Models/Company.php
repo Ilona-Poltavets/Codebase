@@ -34,6 +34,11 @@ class Company extends Model
         return $this->hasMany(Projects::class);
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
     public static function normalizeDomain(?string $domain, string $companyName): string
     {
         $baseDomain = parse_url(config('app.url'), PHP_URL_HOST);

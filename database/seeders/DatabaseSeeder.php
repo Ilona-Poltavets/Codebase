@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             // UserSeeder::class,
             CompanySeeder::class,
             ProjectsSeeder::class,
+            TicketMetaSeeder::class,
         ]);
     }
 }

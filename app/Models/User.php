@@ -55,12 +55,17 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->belongsToMany(Projects::class);
+        return $this->belongsToMany(Projects::class, 'project_user', 'user_id', 'project_id');
     }
 
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function assignedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'assignee_id');
     }
 
     public function hasRole(string $role): bool

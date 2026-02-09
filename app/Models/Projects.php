@@ -17,7 +17,12 @@ class Projects extends Model
     ];
 
     public function users(){
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'project_id');
     }
 
     public function company()

@@ -15,7 +15,7 @@ class AdminOrOwner
     {
         $user = $request->user();
 
-        if (! $user || (! $user->hasRole('admin') && ! $user->hasRole('owner'))) {
+        if (! $user || (! $user->hasRole('admin') && ! $user->hasRole('owner') && ! $user->hasRole('manager'))) {
             abort(403);
         }
 

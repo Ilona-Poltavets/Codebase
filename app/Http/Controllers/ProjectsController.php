@@ -9,6 +9,45 @@ use App\Models\Company;
 
 class ProjectsController extends Controller
 {
+    private function authorizeProjectAccess(Projects $project): void
+    {
+        if (! request()->user()->hasRole('admin') && $project->company_id !== request()->user()->company_id) {
+            abort(403);
+        }
+    }
+
+    private function sectionResponse(Projects $project, string $section)
+    {
+        $this->authorizeProjectAccess($project);
+
+        $project->load('company');
+
+        $statusCounts = [
+            'new' => 6,
+            'in_progress' => 3,
+            'done' => 12,
+        ];
+
+        $tickets = [
+            ['title' => 'Setup CI pipeline', 'status' => 'in_progress', 'priority' => 'high', 'category' => 'general', 'type' => 'feature', 'assignee' => 'Alex'],
+            ['title' => 'Fix login validation', 'status' => 'new', 'priority' => 'medium', 'category' => 'api', 'type' => 'bug', 'assignee' => 'Maria'],
+            ['title' => 'Refactor auth middleware', 'status' => 'done', 'priority' => 'low', 'category' => 'refactoring', 'type' => 'feature', 'assignee' => 'Ivan'],
+        ];
+        $repositories = [
+            'api-service',
+            'frontend-app',
+            'infra-scripts',
+        ];
+
+        return view('projects.section', [
+            'project' => $project,
+            'section' => $section,
+            'statusCounts' => $statusCounts,
+            'tickets' => $tickets,
+            'repositories' => $repositories,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -62,14 +101,12 @@ class ProjectsController extends Controller
      */
     public function show(Projects $project)
     {
-        if (! request()->user()->hasRole('admin') && $project->company_id !== request()->user()->company_id) {
-            abort(403);
-        }
+        $this->authorizeProjectAccess($project);
         if (request()->wantsJson()) {
             return response()->json($project->load('company'));
         }
 
-        return redirect()->route('admin.projects.edit', $project);
+        return redirect()->route('admin.projects.overview', $project);
     }
 
     /**
@@ -77,9 +114,7 @@ class ProjectsController extends Controller
      */
     public function edit(Projects $project)
     {
-        if (! request()->user()->hasRole('admin') && $project->company_id !== request()->user()->company_id) {
-            abort(403);
-        }
+        $this->authorizeProjectAccess($project);
         $companies = Company::orderBy('name')->get();
         if (request()->user()->hasRole('owner') || request()->user()->hasRole('manager')) {
             $companies = $companies->where('id', request()->user()->company_id);
@@ -92,9 +127,7 @@ class ProjectsController extends Controller
      */
     public function update(UpdateProjectsRequest $request, Projects $project)
     {
-        if (! $request->user()->hasRole('admin') && $project->company_id !== $request->user()->company_id) {
-            abort(403);
-        }
+        $this->authorizeProjectAccess($project);
         $data = $request->validated();
         if ($request->user()->hasRole('owner') || $request->user()->hasRole('manager')) {
             $data['company_id'] = $request->user()->company_id;
@@ -113,9 +146,7 @@ class ProjectsController extends Controller
      */
     public function destroy(Projects $project)
     {
-        if (! request()->user()->hasRole('admin') && $project->company_id !== request()->user()->company_id) {
-            abort(403);
-        }
+        $this->authorizeProjectAccess($project);
         $project->delete();
 
         if (request()->wantsJson()) {
@@ -123,5 +154,25 @@ class ProjectsController extends Controller
         }
 
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function overview(Projects $project)
+    {
+        return $this->sectionResponse($project, 'overview');
+    }
+
+    public function tickets(Projects $project)
+    {
+        return $this->sectionResponse($project, 'tickets');
+    }
+
+    public function files(Projects $project)
+    {
+        return $this->sectionResponse($project, 'files');
+    }
+
+    public function time(Projects $project)
+    {
+        return $this->sectionResponse($project, 'time');
     }
 }
