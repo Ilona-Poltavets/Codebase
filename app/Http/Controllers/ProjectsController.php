@@ -6,6 +6,8 @@ use App\Models\Projects;
 use App\Http\Requests\StoreProjectsRequest;
 use App\Http\Requests\UpdateProjectsRequest;
 use App\Models\Company;
+use App\Models\Ticket;
+use App\Models\TicketStatus;
 
 class ProjectsController extends Controller
 {
@@ -22,17 +24,30 @@ class ProjectsController extends Controller
 
         $project->load('company');
 
-        $statusCounts = [
-            'new' => 6,
-            'in_progress' => 3,
-            'done' => 12,
-        ];
+        $statuses = TicketStatus::where('company_id', $project->company_id)
+            ->orderBy('sort')
+            ->orderBy('id')
+            ->get();
 
-        $tickets = [
-            ['title' => 'Setup CI pipeline', 'status' => 'in_progress', 'priority' => 'high', 'category' => 'general', 'type' => 'feature', 'assignee' => 'Alex'],
-            ['title' => 'Fix login validation', 'status' => 'new', 'priority' => 'medium', 'category' => 'api', 'type' => 'bug', 'assignee' => 'Maria'],
-            ['title' => 'Refactor auth middleware', 'status' => 'done', 'priority' => 'low', 'category' => 'refactoring', 'type' => 'feature', 'assignee' => 'Ivan'],
-        ];
+        $ticketCounts = Ticket::where('project_id', $project->id)
+            ->selectRaw('status_id, COUNT(*) as aggregate')
+            ->groupBy('status_id')
+            ->pluck('aggregate', 'status_id');
+
+        $statusCounts = $statuses->map(function (TicketStatus $status) use ($ticketCounts) {
+            return [
+                'id' => $status->id,
+                'name' => $status->name,
+                'count' => (int) ($ticketCounts[$status->id] ?? 0),
+            ];
+        });
+
+        $tickets = Ticket::with(['status', 'priority', 'category', 'type', 'assignee'])
+            ->where('project_id', $project->id)
+            ->orderByDesc('id')
+            ->limit(8)
+            ->get();
+
         $repositories = [
             'api-service',
             'frontend-app',
