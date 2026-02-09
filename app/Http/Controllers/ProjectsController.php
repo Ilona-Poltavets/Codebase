@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateProjectsRequest;
 use App\Models\Company;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
+use App\Models\TicketTimeLog;
+use Carbon\Carbon;
 
 class ProjectsController extends Controller
 {
@@ -24,35 +26,106 @@ class ProjectsController extends Controller
 
         $project->load('company');
 
-        $statuses = TicketStatus::where('company_id', $project->company_id)
-            ->orderBy('sort')
-            ->orderBy('id')
-            ->get();
-
-        $ticketCounts = Ticket::where('project_id', $project->id)
-            ->selectRaw('status_id, COUNT(*) as aggregate')
-            ->groupBy('status_id')
-            ->pluck('aggregate', 'status_id');
-
-        $statusCounts = $statuses->map(function (TicketStatus $status) use ($ticketCounts) {
-            return [
-                'id' => $status->id,
-                'name' => $status->name,
-                'count' => (int) ($ticketCounts[$status->id] ?? 0),
-            ];
-        });
-
-        $tickets = Ticket::with(['status', 'priority', 'category', 'type', 'assignee'])
-            ->where('project_id', $project->id)
-            ->orderByDesc('id')
-            ->limit(8)
-            ->get();
-
         $repositories = [
             'api-service',
             'frontend-app',
             'infra-scripts',
         ];
+
+        $statusCounts = collect();
+        $tickets = collect();
+        $timeLogs = collect();
+        $timeByUser = collect();
+        $timeByTicket = collect();
+        $projectTimeTotalMinutes = 0;
+        $timeFilter = request()->query('period', 'today');
+        $rangeFrom = request()->query('from');
+        $rangeTo = request()->query('to');
+
+        if ($section === 'overview') {
+            $statuses = TicketStatus::where('company_id', $project->company_id)
+                ->orderBy('sort')
+                ->orderBy('id')
+                ->get();
+
+            $ticketCounts = Ticket::where('project_id', $project->id)
+                ->selectRaw('status_id, COUNT(*) as aggregate')
+                ->groupBy('status_id')
+                ->pluck('aggregate', 'status_id');
+
+            $statusCounts = $statuses->map(function (TicketStatus $status) use ($ticketCounts) {
+                return [
+                    'id' => $status->id,
+                    'name' => $status->name,
+                    'count' => (int) ($ticketCounts[$status->id] ?? 0),
+                ];
+            });
+
+            $tickets = Ticket::with(['status', 'priority', 'category', 'type', 'assignee'])
+                ->where('project_id', $project->id)
+                ->orderByDesc('id')
+                ->limit(8)
+                ->get();
+        }
+
+        if ($section === 'time') {
+            $timeLogQuery = TicketTimeLog::query()
+                ->whereHas('ticket', function ($q) use ($project) {
+                    $q->where('project_id', $project->id);
+                });
+
+            $now = now();
+            if ($timeFilter === 'today') {
+                $timeLogQuery->whereDate('logged_at', $now->toDateString());
+            } elseif ($timeFilter === 'yesterday') {
+                $timeLogQuery->whereDate('logged_at', $now->copy()->subDay()->toDateString());
+            } elseif ($timeFilter === 'this_week') {
+                $timeLogQuery->whereBetween('logged_at', [
+                    $now->copy()->startOfWeek(),
+                    $now->copy()->endOfWeek(),
+                ]);
+            } elseif ($timeFilter === 'this_month') {
+                $timeLogQuery->whereBetween('logged_at', [
+                    $now->copy()->startOfMonth(),
+                    $now->copy()->endOfMonth(),
+                ]);
+            } elseif ($timeFilter === 'range') {
+                if ($rangeFrom) {
+                    $timeLogQuery->whereDate('logged_at', '>=', Carbon::parse($rangeFrom)->toDateString());
+                }
+                if ($rangeTo) {
+                    $timeLogQuery->whereDate('logged_at', '<=', Carbon::parse($rangeTo)->toDateString());
+                }
+            }
+
+            $timeLogs = (clone $timeLogQuery)
+                ->with(['ticket', 'user'])
+                ->orderByDesc('logged_at')
+                ->orderByDesc('id')
+                ->get();
+
+            $projectTimeTotalMinutes = (clone $timeLogQuery)->sum('minutes');
+
+            $timeByUser = (clone $timeLogQuery)
+                ->selectRaw('user_id, SUM(minutes) as total_minutes')
+                ->groupBy('user_id')
+                ->orderByDesc('total_minutes')
+                ->get()
+                ->map(function ($row) {
+                    $row->user = $row->user_id ? \App\Models\User::find($row->user_id) : null;
+                    return $row;
+                });
+
+            $timeByTicket = (clone $timeLogQuery)
+                ->selectRaw('ticket_id, SUM(minutes) as total_minutes')
+                ->groupBy('ticket_id')
+                ->orderByDesc('total_minutes')
+                ->get()
+                ->map(function ($row) {
+                    $row->ticket = $row->ticket_id ? Ticket::find($row->ticket_id) : null;
+                    return $row;
+                });
+        }
 
         return view('projects.section', [
             'project' => $project,
@@ -60,6 +133,13 @@ class ProjectsController extends Controller
             'statusCounts' => $statusCounts,
             'tickets' => $tickets,
             'repositories' => $repositories,
+            'timeLogs' => $timeLogs,
+            'timeByUser' => $timeByUser,
+            'timeByTicket' => $timeByTicket,
+            'projectTimeTotalMinutes' => $projectTimeTotalMinutes,
+            'timeFilter' => $timeFilter,
+            'rangeFrom' => $rangeFrom,
+            'rangeTo' => $rangeTo,
         ]);
     }
 

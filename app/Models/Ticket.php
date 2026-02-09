@@ -71,4 +71,9 @@ class Ticket extends Model
     {
         return $this->hasMany(TicketActivity::class);
     }
+
+    public function timeLogs()
+    {
+        return $this->hasMany(TicketTimeLog::class);
+    }
 }

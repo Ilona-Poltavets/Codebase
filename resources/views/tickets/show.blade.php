@@ -91,6 +91,26 @@
                 </main>
 
                 <aside class="lg:col-span-4">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 mb-6">
+                        <h4 class="text-lg font-medium text-gray-900">Log Time</h4>
+                        <form class="mt-4 space-y-4" method="post" action="{{ route('admin.projects.tickets.time-logs.store', [$project->id, $ticket->id]) }}">
+                            @csrf
+                            <div>
+                                <x-input-label for="minutes" :value="__('Minutes')" />
+                                <x-text-input id="minutes" name="minutes" type="number" min="1" max="1440" class="mt-1 block w-full" required />
+                            </div>
+                            <div>
+                                <x-input-label for="logged_at" :value="__('Date/Time (optional)')" />
+                                <x-text-input id="logged_at" name="logged_at" type="datetime-local" class="mt-1 block w-full" />
+                            </div>
+                            <div>
+                                <x-input-label for="time_description" :value="__('Description (optional)')" />
+                                <x-text-input id="time_description" name="description" type="text" class="mt-1 block w-full" />
+                            </div>
+                            <x-primary-button>{{ __('Add time') }}</x-primary-button>
+                        </form>
+                    </div>
+
                     <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
                         <h4 class="text-lg font-medium text-gray-900">Update Ticket</h4>
                         <form class="mt-4 space-y-4" method="post" action="{{ route('admin.projects.tickets.update', [$project->id, $ticket->id]) }}">

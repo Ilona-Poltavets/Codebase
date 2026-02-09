@@ -59,6 +59,9 @@ Route::put('projects/{project}/tickets/{ticket}', [\App\Http\Controllers\TicketC
 Route::post('projects/{project}/tickets/{ticket}/comments', [\App\Http\Controllers\TicketCommentController::class, 'store'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.tickets.comments.store');
+Route::post('projects/{project}/tickets/{ticket}/time-logs', [\App\Http\Controllers\TicketTimeLogController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.tickets.time-logs.store');
 
 Route::get('ticket-settings', [\App\Http\Controllers\TicketSettingsController::class, 'index'])
     ->middleware(['auth', 'verified', 'admin_or_owner'])
