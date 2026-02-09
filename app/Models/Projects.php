@@ -25,6 +25,16 @@ class Projects extends Model
         return $this->hasMany(Ticket::class, 'project_id');
     }
 
+    public function folders()
+    {
+        return $this->hasMany(ProjectFolder::class, 'project_id');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(ProjectFile::class, 'project_id');
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);

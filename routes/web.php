@@ -4,6 +4,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProjectFileController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -68,9 +69,21 @@ Route::post('ticket-settings/{type}', [\App\Http\Controllers\TicketSettingsContr
 Route::delete('ticket-settings/{type}/{id}', [\App\Http\Controllers\TicketSettingsController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'admin_or_owner'])
     ->name('tickets.settings.destroy');
-Route::get('projects/{project}/files', [ProjectsController::class, 'files'])
+Route::get('projects/{project}/files', [ProjectFileController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.files');
+Route::post('projects/{project}/files/folders', [ProjectFileController::class, 'storeFolder'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files.folders.store');
+Route::post('projects/{project}/files/upload', [ProjectFileController::class, 'storeFile'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files.upload');
+Route::get('projects/{project}/files/{file}/download', [ProjectFileController::class, 'download'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files.download');
+Route::delete('projects/{project}/files/{file}', [ProjectFileController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files.destroy');
 Route::get('projects/{project}/time', [ProjectsController::class, 'time'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.time');
