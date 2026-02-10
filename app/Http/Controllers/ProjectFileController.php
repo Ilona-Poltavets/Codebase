@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ProjectFile;
 use App\Models\ProjectFolder;
+use App\Models\ProjectRepository;
 use App\Models\Projects;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class ProjectFileController extends Controller
@@ -18,13 +20,15 @@ class ProjectFileController extends Controller
         }
     }
 
-    private function repositories(): array
+    private function repositories(Projects $project)
     {
-        return [
-            'api-service',
-            'frontend-app',
-            'infra-scripts',
-        ];
+        if (! Schema::hasTable('project_repositories')) {
+            return collect();
+        }
+
+        return ProjectRepository::where('project_id', $project->id)
+            ->orderBy('name')
+            ->get();
     }
 
     public function index(Request $request, Projects $project)
@@ -50,7 +54,7 @@ class ProjectFileController extends Controller
         return view('projects.files', [
             'project' => $project->load('company'),
             'section' => 'files',
-            'repositories' => $this->repositories(),
+            'repositories' => $this->repositories($project),
             'currentFolder' => $currentFolder,
             'folders' => $folders,
             'files' => $files,

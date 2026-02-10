@@ -6,10 +6,12 @@ use App\Models\Projects;
 use App\Http\Requests\StoreProjectsRequest;
 use App\Http\Requests\UpdateProjectsRequest;
 use App\Models\Company;
+use App\Models\ProjectRepository;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
 use App\Models\TicketTimeLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class ProjectsController extends Controller
 {
@@ -26,11 +28,12 @@ class ProjectsController extends Controller
 
         $project->load('company');
 
-        $repositories = [
-            'api-service',
-            'frontend-app',
-            'infra-scripts',
-        ];
+        $repositories = collect();
+        if (Schema::hasTable('project_repositories')) {
+            $repositories = ProjectRepository::where('project_id', $project->id)
+                ->orderBy('name')
+                ->get();
+        }
 
         $statusCounts = collect();
         $tickets = collect();

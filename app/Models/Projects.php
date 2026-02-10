@@ -39,4 +39,9 @@ class Projects extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function repositories()
+    {
+        return $this->hasMany(ProjectRepository::class, 'project_id');
+    }
 }

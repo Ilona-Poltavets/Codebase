@@ -5,6 +5,7 @@ use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectFileController;
+use App\Http\Controllers\ProjectRepositoryController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -90,6 +91,15 @@ Route::delete('projects/{project}/files/{file}', [ProjectFileController::class, 
 Route::get('projects/{project}/time', [ProjectsController::class, 'time'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.time');
+Route::post('projects/{project}/repositories', [ProjectRepositoryController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.repositories.store');
+Route::get('projects/{project}/repositories/{repository}', [ProjectRepositoryController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.repositories.show');
+Route::delete('projects/{project}/repositories/{repository}', [ProjectRepositoryController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.repositories.destroy');
 
 Route::get('invites/create', [InviteController::class, 'create'])
     ->middleware(['auth', 'verified', 'admin_or_owner'])

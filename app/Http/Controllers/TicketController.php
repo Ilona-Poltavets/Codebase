@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Projects;
+use App\Models\ProjectRepository;
 use App\Models\Ticket;
 use App\Models\TicketCategory;
 use App\Models\TicketPriority;
@@ -10,6 +11,7 @@ use App\Models\TicketStatus;
 use App\Models\TicketType;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 
 class TicketController extends Controller
@@ -31,13 +33,15 @@ class TicketController extends Controller
         ];
     }
 
-    private function repositories(): array
+    private function repositories(Projects $project)
     {
-        return [
-            'api-service',
-            'frontend-app',
-            'infra-scripts',
-        ];
+        if (! Schema::hasTable('project_repositories')) {
+            return collect();
+        }
+
+        return ProjectRepository::where('project_id', $project->id)
+            ->orderBy('name')
+            ->get();
     }
 
     public function index(Projects $project)
@@ -49,7 +53,7 @@ class TicketController extends Controller
             ->orderByDesc('id')
             ->paginate(15);
 
-        $repositories = $this->repositories();
+        $repositories = $this->repositories($project);
         return view('tickets.index', compact('project', 'tickets', 'repositories'));
     }
 
@@ -60,7 +64,7 @@ class TicketController extends Controller
         $meta = $this->loadMeta($project->company_id);
         $assignees = User::where('company_id', $project->company_id)->orderBy('name')->get();
 
-        $repositories = $this->repositories();
+        $repositories = $this->repositories($project);
         return view('tickets.create', array_merge($meta, compact('project', 'assignees', 'repositories')));
     }
 
@@ -106,7 +110,7 @@ class TicketController extends Controller
         $meta = $this->loadMeta($project->company_id);
         $assignees = User::where('company_id', $project->company_id)->orderBy('name')->get();
 
-        $repositories = $this->repositories();
+        $repositories = $this->repositories($project);
         return view('tickets.show', array_merge($meta, compact('project', 'ticket', 'assignees', 'repositories')));
     }
 
