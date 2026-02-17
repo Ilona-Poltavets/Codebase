@@ -48,6 +48,8 @@ class ProjectRepositoryController extends Controller
     private function runGit(string $path, string $command): void
     {
         $git = $this->resolveGitBinary();
+        // Guard against accidentally passing "git ..." in callers.
+        $command = preg_replace('/^\s*git\s+/i', '', $command) ?? $command;
         $result = Process::path($path)->run('"' . $git . '" ' . $command);
         if (! $result->successful()) {
             $error = trim($result->errorOutput()) ?: trim($result->output());
@@ -114,10 +116,10 @@ class ProjectRepositoryController extends Controller
                 throw new \RuntimeException('Unable to create repository directory.');
             }
 
-            $this->runGit($repoPath, 'git init -b main');
+            $this->runGit($repoPath, 'init -b main');
             file_put_contents($repoPath . DIRECTORY_SEPARATOR . 'README.md', '# ' . $data['name'] . PHP_EOL);
-            $this->runGit($repoPath, 'git add README.md');
-            $this->runGit($repoPath, 'git -c user.name="Codebase Bot" -c user.email="repo@local" commit -m "Initial commit"');
+            $this->runGit($repoPath, 'add README.md');
+            $this->runGit($repoPath, '-c user.name="Codebase Bot" -c user.email="repo@local" commit -m "Initial commit"');
 
             $repository = ProjectRepository::create([
                 'project_id' => $project->id,
