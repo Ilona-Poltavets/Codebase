@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProjectFile;
+use App\Models\ProjectFileComment;
 use App\Models\ProjectFolder;
 use App\Models\ProjectRepository;
 use App\Models\Projects;
@@ -31,6 +32,15 @@ class ProjectFileController extends Controller
             ->get();
     }
 
+    private function applyFolderScope($query, ?int $folderId)
+    {
+        if ($folderId === null) {
+            return $query->whereNull('folder_id');
+        }
+
+        return $query->where('folder_id', $folderId);
+    }
+
     public function index(Request $request, Projects $project)
     {
         $this->authorizeProjectAccess($project);
@@ -47,7 +57,8 @@ class ProjectFileController extends Controller
             ->get();
 
         $files = ProjectFile::where('project_id', $project->id)
-            ->where('folder_id', $currentFolder?->id)
+            ->where('is_current', true)
+            ->when($currentFolder?->id, fn ($query, $folderId) => $query->where('folder_id', $folderId), fn ($query) => $query->whereNull('folder_id'))
             ->orderByDesc('id')
             ->get();
 
@@ -130,11 +141,25 @@ class ProjectFileController extends Controller
 
         $storedPath = $file->storeAs($baseDir, $finalName, 'local');
 
+        $latestCurrent = $this->applyFolderScope(
+            ProjectFile::where('project_id', $project->id)
+                ->where('name', $originalName)
+                ->where('is_current', true),
+            $folder?->id
+        )->first();
+
+        $version = ($latestCurrent?->version ?? 0) + 1;
+        if ($latestCurrent) {
+            $latestCurrent->update(['is_current' => false]);
+        }
+
         ProjectFile::create([
             'project_id' => $project->id,
             'folder_id' => $folder?->id,
             'uploaded_by' => $request->user()->id,
             'name' => $originalName,
+            'version' => $version,
+            'is_current' => true,
             'disk' => 'local',
             'path' => $storedPath,
             'size' => $file->getSize() ?: 0,
@@ -166,11 +191,74 @@ class ProjectFileController extends Controller
             abort(404);
         }
 
-        Storage::disk($file->disk)->delete($file->path);
+        $wasCurrent = (bool) $file->is_current;
         $folderId = $file->folder_id;
+
+        Storage::disk($file->disk)->delete($file->path);
         $file->delete();
+
+        if ($wasCurrent) {
+            $fallback = $this->applyFolderScope(
+                ProjectFile::where('project_id', $project->id)
+                    ->where('name', $file->name)
+                    ->orderByDesc('version'),
+                $folderId
+            )->first();
+
+            if ($fallback) {
+                $fallback->update(['is_current' => true]);
+            }
+        }
 
         return redirect()->route('admin.projects.files', ['project' => $project->id, 'folder_id' => $folderId])
             ->with('success', 'File deleted.');
+    }
+
+    public function show(Projects $project, ProjectFile $file)
+    {
+        $this->authorizeProjectAccess($project);
+        if ($file->project_id !== $project->id) {
+            abort(404);
+        }
+
+        $versions = $this->applyFolderScope(
+            ProjectFile::where('project_id', $project->id)
+                ->where('name', $file->name)
+                ->with('uploader')
+                ->orderByDesc('version'),
+            $file->folder_id
+        )->get();
+
+        $file->load(['uploader', 'comments.user']);
+
+        return view('projects.file-show', [
+            'project' => $project->load('company'),
+            'section' => 'files',
+            'repositories' => $this->repositories($project),
+            'file' => $file,
+            'versions' => $versions,
+        ]);
+    }
+
+    public function storeComment(Request $request, Projects $project, ProjectFile $file)
+    {
+        $this->authorizeProjectAccess($project);
+        if ($file->project_id !== $project->id) {
+            abort(404);
+        }
+
+        $data = $request->validate([
+            'body' => 'required|string|max:2000',
+        ]);
+
+        ProjectFileComment::create([
+            'project_file_id' => $file->id,
+            'user_id' => $request->user()->id,
+            'body' => $data['body'],
+        ]);
+
+        return redirect()
+            ->route('admin.projects.files.show', ['project' => $project->id, 'file' => $file->id])
+            ->with('success', 'Comment added.');
     }
 }

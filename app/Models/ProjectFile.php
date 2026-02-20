@@ -11,6 +11,8 @@ class ProjectFile extends Model
         'folder_id',
         'uploaded_by',
         'name',
+        'version',
+        'is_current',
         'disk',
         'path',
         'size',
@@ -30,5 +32,10 @@ class ProjectFile extends Model
     public function uploader()
     {
         return $this->belongsTo(User::class, 'uploaded_by');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(ProjectFileComment::class, 'project_file_id')->latest();
     }
 }

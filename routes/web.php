@@ -82,6 +82,12 @@ Route::post('projects/{project}/files/folders', [ProjectFileController::class, '
 Route::post('projects/{project}/files/upload', [ProjectFileController::class, 'storeFile'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.files.upload');
+Route::get('projects/{project}/files/{file}', [ProjectFileController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files.show');
+Route::post('projects/{project}/files/{file}/comments', [ProjectFileController::class, 'storeComment'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.files.comments.store');
 Route::get('projects/{project}/files/{file}/download', [ProjectFileController::class, 'download'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.files.download');

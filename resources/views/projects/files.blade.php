@@ -68,6 +68,7 @@
                             <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                             <tr class="text-left text-sm">
                                 <th class="px-4 py-3">Name</th>
+                                <th class="px-4 py-3">Version</th>
                                 <th class="px-4 py-3">Status</th>
                                 <th class="px-4 py-3">Type</th>
                                 <th class="px-4 py-3">Size</th>
@@ -84,6 +85,7 @@
                                             {{ $folder->name }}/
                                         </a>
                                     </td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-300">-</td>
                                     <td class="px-4 py-3">
                                         <span class="inline-flex px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs">Folder</span>
                                     </td>
@@ -97,14 +99,19 @@
                             @forelse($files as $file)
                                 <tr class="border-t border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-100">
                                     <td class="px-4 py-3 truncate max-w-[360px]">{{ $file->name }}</td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-300">v{{ $file->version }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs">New</span>
+                                        <span class="inline-flex px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs">Current</span>
                                     </td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-300">File</td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ number_format($file->size / 1024 / 1024, 2) }} MB</td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $file->updated_at?->format('d.m.Y H:i:s') }}</td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-2">
+                                            <a href="{{ route('admin.projects.files.show', ['project' => $project->id, 'file' => $file->id]) }}"
+                                               class="h-9 px-3 rounded-md bg-gray-600 hover:bg-gray-500 text-white text-xs font-semibold inline-flex items-center">
+                                                Details
+                                            </a>
                                             <a href="{{ route('admin.projects.files.download', ['project' => $project->id, 'file' => $file->id]) }}"
                                                class="h-9 px-3 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold inline-flex items-center">
                                                 Download
@@ -123,7 +130,7 @@
                             @empty
                                 @if($folders->isEmpty())
                                     <tr class="border-t border-gray-200 dark:border-gray-700">
-                                        <td colspan="6" class="px-4 py-6 text-sm text-gray-500 dark:text-gray-400">No files or folders in this location.</td>
+                                        <td colspan="7" class="px-4 py-6 text-sm text-gray-500 dark:text-gray-400">No files or folders in this location.</td>
                                     </tr>
                                 @endif
                             @endforelse
