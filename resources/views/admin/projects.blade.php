@@ -21,29 +21,31 @@
                         </div>
                     @endif
 
-                    <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-900">
-                        <thead>
-                        <tr>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">ID</th>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Name</th>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Company</th>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Created At</th>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach ($projects as $project)
-                            <tr>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $project->id }}</td>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $project->name }}</td>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">
-                                    {{ $project->company?->name ?? '-' }}
-                                </td>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">
-                                    {{ $project->created_at ? $project->created_at->format('Y-m-d') : '-' }}
-                                </td>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2 text-center">
-                                    <div class="flex items-center justify-center gap-3">
+                    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-[820px] w-full text-sm">
+                                <thead class="bg-gray-50 dark:bg-gray-900/40">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200">ID</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200">Name</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200">Company</th>
+                                    <th class="hidden md:table-cell px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200">Created At</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                                @foreach ($projects as $project)
+                                    <tr class="hover:bg-gray-50/70 dark:hover:bg-gray-700/20">
+                                        <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $project->id }}</td>
+                                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{{ $project->name }}</td>
+                                        <td class="px-4 py-3 text-gray-700 dark:text-gray-200">
+                                            {{ $project->company?->name ?? '-' }}
+                                        </td>
+                                        <td class="hidden md:table-cell px-4 py-3 text-gray-600 dark:text-gray-300">
+                                            {{ $project->created_at ? $project->created_at->format('Y-m-d') : '-' }}
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <div class="flex items-center justify-center gap-3">
                                         <a href="{{ route('admin.projects.overview', $project->id) }}"
                                            class="text-blue-500 hover:text-blue-700" title="Overview">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
@@ -83,11 +85,13 @@
                                             </button>
                                         </form>
                                     </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     @if(method_exists($projects, 'links'))
                         <div class="mt-4">

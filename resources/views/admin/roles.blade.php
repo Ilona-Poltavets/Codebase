@@ -26,21 +26,23 @@
                         </div>
                     @endif
 
-                    <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-900">
-                        <thead>
-                        <tr>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">ID</th>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Name</th>
-                            <th class="border border-gray-300 dark:border-gray-900 px-4 py-2">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach ($roles as $role)
-                            <tr>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $role->id }}</td>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2">{{ $role->name }}</td>
-                                <td class="border border-gray-300 dark:border-gray-900 px-4 py-2 text-center">
-                                    <div class="flex items-center justify-center gap-3">
+                    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-[560px] w-full text-sm">
+                                <thead class="bg-gray-50 dark:bg-gray-900/40">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200">ID</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200">Name</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                                @foreach ($roles as $role)
+                                    <tr class="hover:bg-gray-50/70 dark:hover:bg-gray-700/20">
+                                        <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $role->id }}</td>
+                                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{{ $role->name }}</td>
+                                        <td class="px-4 py-3 text-center">
+                                            <div class="flex items-center justify-center gap-3">
                                         <a href="{{ route('admin.roles.edit', $role->id) }}"
                                            class="text-green-500 hover:text-green-700" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
@@ -78,11 +80,13 @@
                                             </span>
                                         @endif
                                     </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
