@@ -5,6 +5,7 @@ use App\Http\Controllers\ActivityFeedController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectFileController;
 use App\Http\Controllers\ProjectRepositoryController;
 use App\Http\Controllers\ProjectsController;
@@ -17,9 +18,9 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 //Route::get('/users', [UserController::class, 'index'])
 //    ->middleware(['auth', 'verified'])
 //    ->name('users');
