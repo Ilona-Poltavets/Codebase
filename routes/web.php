@@ -165,7 +165,7 @@ Route::get('invite/{token}', [\App\Http\Controllers\Auth\RegisteredUserControlle
     ->name('invite.accept');
 
 Route::resource('users', UserController::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'admin_or_owner'])
     ->names('admin.users');
 
 Route::middleware('auth')->group(function () {

@@ -18,12 +18,88 @@
                         </div>
 
                         <div class="mt-6 bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
+                            @php
+                                $totalTickets = collect($statusCounts)->sum('count');
+                                $maxTicketsInStatus = collect($statusCounts)->max('count') ?: 1;
+                                $palette = ['#38bdf8', '#22c55e', '#f59e0b', '#f43f5e', '#a78bfa', '#14b8a6'];
+                                $segments = [];
+                                $legend = [];
+                                $cursor = 0.0;
+
+                                foreach ($statusCounts as $i => $status) {
+                                    $count = (int) $status['count'];
+                                    if ($count <= 0) {
+                                        continue;
+                                    }
+
+                                    $color = $palette[$i % count($palette)];
+                                    $percent = $totalTickets > 0 ? ($count / $totalTickets) * 100 : 0;
+                                    $end = $cursor + $percent;
+                                    $segments[] = $color.' '.number_format($cursor, 4, '.', '').'% '.number_format($end, 4, '.', '').'%';
+                                    $legend[] = [
+                                        'name' => $status['name'],
+                                        'count' => $count,
+                                        'percent' => $percent,
+                                        'color' => $color,
+                                    ];
+                                    $cursor = $end;
+                                }
+
+                                $donutGradient = count($segments)
+                                    ? 'conic-gradient('.implode(', ', $segments).')'
+                                    : 'conic-gradient(#334155 0% 100%)';
+                            @endphp
+
                             <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Tickets</h3>
-                                <div class="text-sm text-gray-500">Status chart placeholder</div>
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Tickets Analytics</h3>
+                                <div class="text-sm text-gray-500">Total: {{ $totalTickets }}</div>
                             </div>
-                            <div class="mt-4 h-48 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-400">
-                                Chart placeholder (status breakdown by existing ticket statuses)
+
+                            <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-200">Status distribution</div>
+                                    <div class="mt-4 flex items-center gap-4">
+                                        <div class="relative h-36 w-36 shrink-0 rounded-full" style="background: {{ $donutGradient }};">
+                                            <div class="absolute inset-4 rounded-full bg-white dark:bg-gray-800"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-600 dark:text-gray-300">
+                                                {{ $totalTickets }}
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2 text-sm">
+                                            @forelse($legend as $row)
+                                                <div class="flex items-center gap-2">
+                                                    <span class="inline-block h-2.5 w-2.5 rounded-full" style="background-color: {{ $row['color'] }}"></span>
+                                                    <span class="text-gray-700 dark:text-gray-200">{{ $row['name'] }}</span>
+                                                    <span class="text-gray-500">{{ $row['count'] }} ({{ number_format($row['percent'], 0) }}%)</span>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500">No tickets yet.</p>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-200">Status load</div>
+                                    <div class="mt-4 space-y-3">
+                                        @foreach($statusCounts as $i => $status)
+                                            @php
+                                                $count = (int) $status['count'];
+                                                $width = $maxTicketsInStatus > 0 ? ($count / $maxTicketsInStatus) * 100 : 0;
+                                                $color = $palette[$i % count($palette)];
+                                            @endphp
+                                            <div>
+                                                <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
+                                                    <span>{{ $status['name'] }}</span>
+                                                    <span>{{ $count }}</span>
+                                                </div>
+                                                <div class="mt-1 h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                                    <div class="h-full rounded-full" style="width: {{ number_format($width, 2, '.', '') }}%; background-color: {{ $color }}"></div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="mt-6">
