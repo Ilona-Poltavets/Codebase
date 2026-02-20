@@ -11,9 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('companies')) {
+            Schema::create('companies', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->unique();
+                $table->text('description')->nullable();
+                $table->string('domain');
+                $table->foreignId('owner_id');
+                $table->enum('plan', ['free', 'pro', 'pro_enterprise']);
+                $table->timestamps();
+            });
+
+            return;
+        }
+
         Schema::table('companies', function (Blueprint $table) {
-            $table->text('description')->nullable();
-            $table->unique('name');
+            if (! Schema::hasColumn('companies', 'description')) {
+                $table->text('description')->nullable();
+            }
         });
     }
 
@@ -22,9 +37,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('companies')) {
+            return;
+        }
+
         Schema::table('companies', function (Blueprint $table) {
-            $table->dropUnique(['name']);
-            $table->dropColumn('description');
+            if (Schema::hasColumn('companies', 'description')) {
+                $table->dropColumn('description');
+            }
         });
     }
 };

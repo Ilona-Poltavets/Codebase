@@ -47,6 +47,15 @@ Route::get('projects/{project}/overview', [ProjectsController::class, 'overview'
 Route::get('projects/{project}/tickets', [\App\Http\Controllers\TicketController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.tickets');
+Route::get('projects/{project}/board', [\App\Http\Controllers\TicketController::class, 'board'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.board');
+Route::get('projects/{project}/board/data', [\App\Http\Controllers\TicketController::class, 'boardData'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.board.data');
+Route::patch('projects/{project}/board/tickets/{ticket}', [\App\Http\Controllers\TicketController::class, 'moveOnBoard'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.board.tickets.move');
 Route::get('projects/{project}/tickets/create', [\App\Http\Controllers\TicketController::class, 'create'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.tickets.create');

@@ -8,10 +8,20 @@
             <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-900">Tickets</h3>
-                    <a href="{{ route('admin.projects.tickets.create', $project->id) }}"
-                       class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-500">
-                        New Ticket
-                    </a>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('admin.projects.board', $project->id) }}"
+                           class="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50">
+                            Project Board
+                        </a>
+                        <a href="{{ route('admin.projects.board', $project->id) }}?view=developer"
+                           class="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50">
+                            Developer Board
+                        </a>
+                        <a href="{{ route('admin.projects.tickets.create', $project->id) }}"
+                           class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-500">
+                            New Ticket
+                        </a>
+                    </div>
                 </div>
 
                 <div class="mt-4 space-y-3">

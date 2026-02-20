@@ -57,6 +57,10 @@
            class="px-3 py-2 rounded-md text-sm {{ $section === 'tickets' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
             Tickets
         </a>
+        <a href="{{ route('admin.projects.board', $project->id) }}"
+           class="px-3 py-2 rounded-md text-sm {{ $section === 'board' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
+            Board
+        </a>
         <a href="{{ route('admin.projects.files', $project->id) }}"
            class="px-3 py-2 rounded-md text-sm {{ $section === 'files' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
             Files

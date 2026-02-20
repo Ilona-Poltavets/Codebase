@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CompanySeeder::class,
             ProjectsSeeder::class,
             TicketMetaSeeder::class,
+            ProjectDemoSeeder::class,
         ]);
     }
 }

@@ -13,6 +13,7 @@ class Ticket extends Model
         'company_id',
         'project_id',
         'status_id',
+        'board_position',
         'priority_id',
         'category_id',
         'type_id',
