@@ -44,4 +44,14 @@ class Projects extends Model
     {
         return $this->hasMany(ProjectRepository::class, 'project_id');
     }
+
+    public function wikiPages()
+    {
+        return $this->hasMany(WikiPage::class, 'project_id');
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class, 'project_id');
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\ProjectFileComment;
 use App\Models\ProjectFolder;
 use App\Models\ProjectRepository;
 use App\Models\Projects;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
@@ -106,6 +107,12 @@ class ProjectFileController extends Controller
             'path' => $path,
         ]);
 
+        ActivityLogger::log($project->id, $request->user()->id, 'file.folder_created', [
+            'name' => $data['name'],
+            'path' => $path,
+            'parent_id' => $parent?->id,
+        ]);
+
         return redirect()->route('admin.projects.files', ['project' => $project->id, 'folder_id' => $parent?->id])
             ->with('success', 'Folder created.');
     }
@@ -153,7 +160,7 @@ class ProjectFileController extends Controller
             $latestCurrent->update(['is_current' => false]);
         }
 
-        ProjectFile::create([
+        $savedFile = ProjectFile::create([
             'project_id' => $project->id,
             'folder_id' => $folder?->id,
             'uploaded_by' => $request->user()->id,
@@ -164,6 +171,14 @@ class ProjectFileController extends Controller
             'path' => $storedPath,
             'size' => $file->getSize() ?: 0,
             'mime_type' => $file->getClientMimeType(),
+        ]);
+
+        ActivityLogger::log($project->id, $request->user()->id, 'file.uploaded', [
+            'file_id' => $savedFile->id,
+            'name' => $originalName,
+            'version' => $version,
+            'folder_id' => $folder?->id,
+            'size' => $savedFile->size,
         ]);
 
         return redirect()->route('admin.projects.files', ['project' => $project->id, 'folder_id' => $folder?->id])
@@ -210,6 +225,13 @@ class ProjectFileController extends Controller
             }
         }
 
+        ActivityLogger::log($project->id, request()->user()->id, 'file.deleted', [
+            'file_id' => $file->id,
+            'name' => $file->name,
+            'version' => $file->version,
+            'folder_id' => $folderId,
+        ]);
+
         return redirect()->route('admin.projects.files', ['project' => $project->id, 'folder_id' => $folderId])
             ->with('success', 'File deleted.');
     }
@@ -255,6 +277,12 @@ class ProjectFileController extends Controller
             'project_file_id' => $file->id,
             'user_id' => $request->user()->id,
             'body' => $data['body'],
+        ]);
+
+        ActivityLogger::log($project->id, $request->user()->id, 'file.comment_added', [
+            'file_id' => $file->id,
+            'name' => $file->name,
+            'comment_length' => mb_strlen($data['body']),
         ]);
 
         return redirect()

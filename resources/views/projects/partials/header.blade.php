@@ -61,6 +61,14 @@
            class="px-3 py-2 rounded-md text-sm {{ $section === 'files' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
             Files
         </a>
+        <a href="{{ route('admin.projects.wiki', $project->id) }}"
+           class="px-3 py-2 rounded-md text-sm {{ $section === 'wiki' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
+            Wiki
+        </a>
+        <a href="{{ route('admin.projects.activity', $project->id) }}"
+           class="px-3 py-2 rounded-md text-sm {{ $section === 'activity' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
+            Activity
+        </a>
         <a href="{{ route('admin.projects.time', $project->id) }}"
            class="px-3 py-2 rounded-md text-sm {{ $section === 'time' ? 'bg-indigo-100 text-indigo-800' : 'text-gray-700 hover:bg-white' }}">
             Time

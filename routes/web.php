@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ActivityFeedController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ProjectRepositoryController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WikiPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -97,6 +99,42 @@ Route::delete('projects/{project}/files/{file}', [ProjectFileController::class, 
 Route::get('projects/{project}/time', [ProjectsController::class, 'time'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.time');
+Route::get('projects/{project}/activity', [ActivityFeedController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.activity');
+Route::get('projects/{project}/activity/api', [ActivityFeedController::class, 'indexApi'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.activity.api.index');
+Route::get('projects/{project}/activity/rss', [ActivityFeedController::class, 'rss'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.activity.rss');
+Route::get('projects/{project}/wiki', [WikiPageController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki');
+Route::post('projects/{project}/wiki', [WikiPageController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.store');
+Route::put('projects/{project}/wiki/{wikiPage}', [WikiPageController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.update');
+Route::delete('projects/{project}/wiki/{wikiPage}', [WikiPageController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.destroy');
+Route::get('projects/{project}/wiki-pages', [WikiPageController::class, 'indexApi'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.api.index');
+Route::post('projects/{project}/wiki-pages', [WikiPageController::class, 'storeApi'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.api.store');
+Route::get('projects/{project}/wiki-pages/{wikiPage}', [WikiPageController::class, 'showApi'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.api.show');
+Route::put('projects/{project}/wiki-pages/{wikiPage}', [WikiPageController::class, 'updateApi'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.api.update');
+Route::delete('projects/{project}/wiki-pages/{wikiPage}', [WikiPageController::class, 'destroyApi'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.projects.wiki.api.destroy');
 Route::post('projects/{project}/repositories', [ProjectRepositoryController::class, 'store'])
     ->middleware(['auth', 'verified'])
     ->name('admin.projects.repositories.store');

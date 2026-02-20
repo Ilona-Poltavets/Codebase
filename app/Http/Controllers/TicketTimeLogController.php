@@ -6,6 +6,7 @@ use App\Models\Projects;
 use App\Models\Ticket;
 use App\Models\TicketActivity;
 use App\Models\TicketTimeLog;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 
 class TicketTimeLogController extends Controller
@@ -46,6 +47,13 @@ class TicketTimeLogController extends Controller
                 'minutes' => (int) $data['minutes'],
                 'description' => $data['description'] ?? null,
             ],
+        ]);
+
+        ActivityLogger::log($project->id, $request->user()->id, 'ticket.time_logged', [
+            'ticket_id' => $ticket->id,
+            'ticket_title' => $ticket->title,
+            'minutes' => (int) $data['minutes'],
+            'description' => $data['description'] ?? null,
         ]);
 
         return redirect()->route('admin.projects.tickets.show', [$project->id, $ticket->id])

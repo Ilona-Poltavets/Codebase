@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'assignee_id');
     }
 
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class, 'user_id');
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->roles->contains('name', $role);

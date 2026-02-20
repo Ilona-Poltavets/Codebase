@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProjectRepository;
 use App\Models\Projects;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
@@ -490,6 +491,13 @@ class ProjectRepositoryController extends Controller
 
             $repository = ProjectRepository::create($payload);
 
+            ActivityLogger::log($project->id, $request->user()->id, 'repository.created', [
+                'repository_id' => $repository->id,
+                'name' => $repository->name,
+                'slug' => $repository->slug,
+                'vcs_type' => $repository->vcs_type ?? $vcsType,
+            ]);
+
             return redirect()
                 ->route('admin.projects.repositories.show', [$project->id, $repository->id])
                 ->with('success', 'Repository created.');
@@ -605,6 +613,12 @@ class ProjectRepositoryController extends Controller
                 $this->deleteDirectory($svnStoragePath);
             }
         }
+
+        ActivityLogger::log($project->id, request()->user()->id, 'repository.deleted', [
+            'repository_id' => $repository->id,
+            'name' => $repository->name,
+            'slug' => $repository->slug,
+        ]);
 
         $repository->delete();
 
