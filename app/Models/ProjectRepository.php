@@ -14,6 +14,7 @@ class ProjectRepository extends Model
         'created_by',
         'name',
         'slug',
+        'vcs_type',
         'path',
         'default_branch',
     ];

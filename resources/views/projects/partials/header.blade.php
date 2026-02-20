@@ -45,7 +45,7 @@
                     @forelse($repositories as $repo)
                         <a href="{{ route('admin.projects.repositories.show', [$project->id, $repo->id]) }}"
                            class="block w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-                            {{ $repo->name }}
+                            {{ $repo->name }} <span class="text-xs text-gray-400">({{ strtoupper($repo->vcs_type ?? 'git') }})</span>
                         </a>
                     @empty
                         <div class="px-3 py-2 text-sm text-gray-400">No repositories yet.</div>
@@ -71,6 +71,7 @@
 <form id="create-repository-form" method="post" action="{{ route('admin.projects.repositories.store', $project->id) }}" class="hidden">
     @csrf
     <input type="hidden" name="name" id="create-repository-name">
+    <input type="hidden" name="vcs_type" id="create-repository-vcs">
 </form>
 
 @push('scripts')
@@ -81,6 +82,7 @@
             const createRepositoryButton = document.getElementById('create-repository-btn');
             const createRepositoryForm = document.getElementById('create-repository-form');
             const createRepositoryInput = document.getElementById('create-repository-name');
+            const createRepositoryVcsInput = document.getElementById('create-repository-vcs');
             if (!tab || !menu) return;
 
             let overTab = false;
@@ -95,13 +97,21 @@
             menu.addEventListener('mouseenter', () => { overMenu = true; sync(); });
             menu.addEventListener('mouseleave', () => { overMenu = false; sync(); });
 
-            if (createRepositoryButton && createRepositoryForm && createRepositoryInput) {
+            if (createRepositoryButton && createRepositoryForm && createRepositoryInput && createRepositoryVcsInput) {
                 createRepositoryButton.addEventListener('click', () => {
                     const name = window.prompt('Repository name');
                     if (!name) return;
                     const trimmed = name.trim();
                     if (!trimmed) return;
+                    const typeRaw = window.prompt('VCS type: git, hg, svn', 'git');
+                    if (!typeRaw) return;
+                    const type = typeRaw.trim().toLowerCase();
+                    if (!['git', 'hg', 'svn'].includes(type)) {
+                        window.alert('Unsupported VCS type. Use: git, hg, svn.');
+                        return;
+                    }
                     createRepositoryInput.value = trimmed;
+                    createRepositoryVcsInput.value = type;
                     createRepositoryForm.submit();
                 });
             }
