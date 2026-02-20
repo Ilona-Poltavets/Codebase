@@ -1,108 +1,127 @@
-# Laravel + Vite + TailwindCSS + SCSS
+﻿# Codebase
 
-This project is built with **Laravel** as the backend, **Vite** for asset bundling, styled with **Tailwind CSS**, and includes **SCSS** support.
+Codebase is a team collaboration platform for project work: tickets, Trello-style boards, files, wiki, activity feed, and time tracking.
 
----
+## Why this project exists
 
-## 🚀 Installation & Setup
+`Codebase` helps teams run project delivery in one place:
+- plan and move tasks across board statuses;
+- assign tasks to people;
+- keep project files and documentation (Wiki);
+- log time on tasks;
+- review project activity in one timeline.
 
-### 1. Clone the repository
-```bash
-git clone <repo-url>
-cd <project-folder>
-````
+It is useful when a team wants one consistent workflow instead of multiple disconnected tools.
 
-### 2. Install dependencies
+## What is included
+
+- `Dashboard`: project overview, quick actions, board entry points.
+- `Projects`: project list and project workspace.
+- `Custom Trello Board`: board modes (Project / Developer / My Board).
+- `Tickets`: create, update, comment, and log time.
+- `Files`: project file area.
+- `Wiki`: project documentation with versions.
+- `Activity`: event feed.
+- `Time`: time reports.
+
+## Roles and access
+
+Primary roles: `admin`, `owner`, `manager`, `developer`, `member`.
+
+Example access rules:
+- `Users` section is available only to `admin`, `owner`, `manager`.
+- Other access depends on company and project membership.
+
+## End-user guide (regular user)
+
+1. Sign in with your assigned credentials.
+2. Open `Dashboard`.
+3. Go to `Projects` and select a project.
+4. Work from the board:
+   - `Project View` for status columns;
+   - `Developer View` for assignee columns;
+   - `My Board` for personal queue.
+5. Open a `Ticket` and:
+   - update status/fields;
+   - add comments;
+   - add manual time logs.
+6. Use `Wiki` and `Files` as project knowledge sources.
+
+## Quick start (local)
+
+### 1) Install
 
 ```bash
 composer install
 npm install
 ```
 
-### 3. Configure `.env`
-
-Copy `.env.example` and set up your database and environment variables:
+### 2) Configure
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Run migrations
+Set your database credentials in `.env`.
+
+### 3) Migrate and seed
 
 ```bash
 php artisan migrate
+php artisan db:seed
 ```
 
-### 5. Start development servers
+### 4) Run
 
 In two terminals:
 
 ```bash
-# Backend
-php artisan serve
-
-# Frontend
+php artisan serve --host=127.0.0.1 --port=8000
 npm run dev
 ```
 
-### 5.2. Start development servers (OSP)
-
-```bash
-osp use PHP-8.3
-osp add Node-24.8.0
-osp add MySQL-8.2
-
-cd home/codebase
-composer run dev
-```
-
-Access the project:
-
-* Laravel API → [http://127.0.0.1:8000](http://127.0.0.1:8000)
-* Vite (Frontend) → [http://127.0.0.1:5173](http://127.0.0.1:5173)
-
----
-
-## 📦 Production Build
+Or with compiled assets:
 
 ```bash
 npm run build
-php artisan optimize
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
----
+## Demo accounts (if demo seeder is used)
 
-## 📂 Project Structure
+- `admin@example.com` / `admin123`
+- `owner@mercuria.local` / `password`
+- `manager@mercuria.local` / `password`
+- `dev1@mercuria.local` / `password`
+- `dev2@mercuria.local` / `password`
+- `dev3@mercuria.local` / `password`
+- `member@mercuria.local` / `password`
 
-* `resources/scss/app.scss` – main stylesheet, includes Tailwind and custom SCSS.
-* `tailwind.config.cjs` – Tailwind configuration.
-* `postcss.config.cjs` – PostCSS plugins (Tailwind + Autoprefixer).
-* `vite.config.js` – Vite configuration.
-
----
-
-## ⚡ Useful Commands
+## Useful commands
 
 ```bash
-php artisan serve       # Run Laravel backend
-npm run dev             # Run Vite in dev mode
-npm run build           # Build for production
-npm run preview         # Preview production build
+php artisan optimize:clear
+php artisan migrate:fresh --seed
+npm run build
 ```
 
----
+## Public access via ngrok
 
-## 🛠 Requirements
+1. Start backend:
 
-* PHP >= 8.1
-* Composer
-* Node.js >= 18
-* NPM or Yarn
-
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
----
+2. Start ngrok:
 
-Do you want me to also add **Blade layout examples (header/footer, Tailwind classes, Vite integration)** to the README so it looks like a proper starter kit?
+```bash
+ngrok http 8000
+```
+
+3. Set `APP_URL` in `.env` to your `https://...ngrok-free.app` URL and run:
+
+```bash
+php artisan optimize:clear
 ```
