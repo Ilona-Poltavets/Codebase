@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'codebase' => [
+        'contact_email' => env('CODEBASE_CONTACT_EMAIL', 'hello@codebase.local'),
+        'github_url' => env('CODEBASE_GITHUB_URL', 'https://github.com/'),
+        'linkedin_url' => env('CODEBASE_LINKEDIN_URL', 'https://www.linkedin.com/'),
+    ],
+
 ];
