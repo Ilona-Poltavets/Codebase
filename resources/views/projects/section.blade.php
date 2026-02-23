@@ -105,7 +105,8 @@
                             <div class="mt-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     @forelse($tickets as $ticket)
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                                        <a href="{{ route('admin.projects.tickets.show', [$project->id, $ticket->id]) }}"
+                                           class="block rounded-lg border border-gray-200 p-4 transition-colors duration-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700/50">
                                             <div class="flex items-center justify-between">
                                                 <h4 class="font-medium text-gray-800 dark:text-gray-100">{{ $ticket->title }}</h4>
                                                 <span class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -118,7 +119,7 @@
                                             <div class="mt-3 text-xs text-gray-400">
                                                 Assigned: {{ $ticket->assignee?->name ?? 'Unassigned' }}
                                             </div>
-                                        </div>
+                                        </a>
                                     @empty
                                         <p class="text-sm text-gray-500">No tickets in this project yet.</p>
                                     @endforelse

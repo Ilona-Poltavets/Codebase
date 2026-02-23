@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-                <h2 class="font-semibold text-2xl text-gray-800 leading-tight">Workspace Dashboard</h2>
-                <p class="text-sm text-gray-500 mt-1">One place for board work, project flow and time tracking.</p>
+                <h2 class="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">Workspace Dashboard</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">One place for board work, project flow and time tracking.</p>
             </div>
             <div class="flex items-center gap-2">
                 @if($boardsProject)
@@ -23,17 +23,17 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <article class="rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-100 p-5 shadow-sm">
-                    <p class="text-xs uppercase tracking-widest text-sky-700">Total Tickets</p>
-                    <p class="mt-2 text-3xl font-semibold text-sky-900">{{ $totalTickets }}</p>
+                <article class="rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-100 p-5 shadow-sm dark:border-sky-500/30 dark:from-sky-900/35 dark:to-cyan-900/25">
+                    <p class="text-xs uppercase tracking-widest text-sky-700 dark:text-sky-300">Total Tickets</p>
+                    <p class="mt-2 text-3xl font-semibold text-sky-900 dark:text-sky-100">{{ $totalTickets }}</p>
                 </article>
-                <article class="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-lime-100 p-5 shadow-sm">
-                    <p class="text-xs uppercase tracking-widest text-emerald-700">My Tickets</p>
-                    <p class="mt-2 text-3xl font-semibold text-emerald-900">{{ $myTicketsCount }}</p>
+                <article class="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-lime-100 p-5 shadow-sm dark:border-emerald-500/30 dark:from-emerald-900/35 dark:to-lime-900/20">
+                    <p class="text-xs uppercase tracking-widest text-emerald-700 dark:text-emerald-300">My Tickets</p>
+                    <p class="mt-2 text-3xl font-semibold text-emerald-900 dark:text-emerald-100">{{ $myTicketsCount }}</p>
                 </article>
-                <article class="rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-indigo-100 p-5 shadow-sm">
-                    <p class="text-xs uppercase tracking-widest text-violet-700">Done Tickets</p>
-                    <p class="mt-2 text-3xl font-semibold text-violet-900">{{ $doneTicketsCount }}</p>
+                <article class="rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-indigo-100 p-5 shadow-sm dark:border-violet-500/30 dark:from-violet-900/35 dark:to-indigo-900/25">
+                    <p class="text-xs uppercase tracking-widest text-violet-700 dark:text-violet-300">Done Tickets</p>
+                    <p class="mt-2 text-3xl font-semibold text-violet-900 dark:text-violet-100">{{ $doneTicketsCount }}</p>
                 </article>
             </section>
 

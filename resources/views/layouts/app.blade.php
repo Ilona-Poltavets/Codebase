@@ -8,8 +8,9 @@
         <title>@yield('title', 'Codebase')</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
 {{--        @vite(['resources/css/app.css', 'resources/js/app.js'])--}}
@@ -21,13 +22,13 @@
             </style>
         @endif
     </head>
-    <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-inter">
-        <div class="min-h-screen">
+    <body class="admin-ui font-sans antialiased bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-200">
+        <div class="min-h-screen admin-shell">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="main-header shadow">
+                <header class="main-header border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-900/75">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
@@ -40,23 +41,48 @@
             </main>
         </div>
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const toggleButton = document.getElementById('theme-toggle');
-                const html = document.documentElement;
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        const html = document.documentElement;
 
-                if (localStorage.getItem('theme') === 'dark') {
-                    html.classList.add('dark');
-                    toggleButton.textContent = '☀️';
-                }
+        if (!toggleButton) {
+            return;
+        }
 
-                toggleButton.addEventListener('click', () => {
-                    html.classList.toggle('dark');
-                    const isDark = html.classList.contains('dark');
-                    toggleButton.textContent = isDark ? '☀️' : '🌙';
-                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                });
-            })
-        </script>
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+        if (isDark) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        const syncThemeLabel = () => {
+            const dark = html.classList.contains('dark');
+            toggleButton.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+            const moon = document.getElementById('theme-icon-moon');
+            const sun = document.getElementById('theme-icon-sun');
+            if (moon && sun) {
+                moon.classList.toggle('hidden', dark);
+                sun.classList.toggle('hidden', !dark);
+            }
+        };
+
+        syncThemeLabel();
+
+        toggleButton.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const dark = html.classList.contains('dark');
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+            syncThemeLabel();
+        });
+    });
+</script>
         @stack('scripts')
     </body>
 </html>
+
+
+
