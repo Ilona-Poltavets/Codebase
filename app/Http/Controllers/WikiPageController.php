@@ -13,6 +13,11 @@ use Illuminate\Support\Str;
 
 class WikiPageController extends Controller
 {
+    private const MARKDOWN_SAFE_OPTIONS = [
+        'html_input' => 'strip',
+        'allow_unsafe_links' => false,
+    ];
+
     private function authorizeProjectAccess(Projects $project): void
     {
         if (! request()->user()->hasRole('admin') && $project->company_id !== request()->user()->company_id) {
@@ -102,7 +107,9 @@ class WikiPageController extends Controller
 
         $sourceTitle = $selectedVersion?->title ?? $selectedPage?->title ?? '';
         $sourceContent = $selectedVersion?->content ?? $selectedPage?->content ?? '';
-        $renderedContent = $sourceContent === '' ? '' : Str::markdown($sourceContent);
+        $renderedContent = $sourceContent === ''
+            ? ''
+            : Str::markdown($sourceContent, self::MARKDOWN_SAFE_OPTIONS);
 
         return view('projects.wiki', [
             'project' => $project->load('company'),
@@ -236,7 +243,7 @@ class WikiPageController extends Controller
             'title' => $wikiPage->title,
             'slug' => $wikiPage->slug,
             'content' => $wikiPage->content,
-            'rendered_content' => Str::markdown($wikiPage->content ?? ''),
+            'rendered_content' => Str::markdown($wikiPage->content ?? '', self::MARKDOWN_SAFE_OPTIONS),
             'versions' => $wikiPage->versions,
             'created_at' => $wikiPage->created_at,
             'updated_at' => $wikiPage->updated_at,
