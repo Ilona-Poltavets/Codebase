@@ -10,6 +10,7 @@ use App\Models\TicketPriority;
 use App\Models\TicketStatus;
 use App\Models\TicketType;
 use App\Models\User;
+use App\Support\UsageTracker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -342,6 +343,16 @@ class TicketController extends Controller
             'type_id' => $data['type_id'],
             'assignee_id' => $data['assignee_id'] ?? null,
         ]);
+
+        UsageTracker::log(
+            eventType: 'ticket.created',
+            companyId: $project->company_id,
+            userId: $request->user()->id,
+            projectId: $project->id,
+            resourceType: 'ticket',
+            resourceId: $ticket->id,
+            meta: ['status_id' => $ticket->status_id]
+        );
 
         return redirect()->route('admin.projects.tickets.show', [$project->id, $ticket->id])
             ->with('success', 'Ticket created successfully.');

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Support\SecurityAuditLogger;
+use App\Support\UsageTracker;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Login;
@@ -39,6 +40,15 @@ class AppServiceProvider extends ServiceProvider
                 userId: $event->user->id,
                 companyId: $event->user->company_id,
                 context: ['guard' => $event->guard]
+            );
+
+            UsageTracker::log(
+                eventType: 'auth.login',
+                companyId: $event->user->company_id,
+                userId: $event->user->id,
+                resourceType: 'user',
+                resourceId: $event->user->id,
+                meta: ['guard' => $event->guard]
             );
         });
 
