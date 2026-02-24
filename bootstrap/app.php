@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminOnly::class,
             'admin_or_owner' => \App\Http\Middleware\AdminOrOwner::class,
+            'tenant' => \App\Http\Middleware\EnsureTenantIsolation::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
