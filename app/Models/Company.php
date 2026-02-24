@@ -17,6 +17,7 @@ class Company extends Model
         'domain',
         'owner_id',
         'plan',
+        'stripe_customer_id',
     ];
 
     public function users()
@@ -37,6 +38,11 @@ class Company extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(CompanySubscription::class);
     }
 
     public static function normalizeDomain(?string $domain, string $companyName): string

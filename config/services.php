@@ -41,4 +41,11 @@ return [
         'linkedin_url' => env('CODEBASE_LINKEDIN_URL', 'https://www.linkedin.com/'),
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'billing_enabled' => env('BILLING_ENABLED', true),
+    ],
+
 ];

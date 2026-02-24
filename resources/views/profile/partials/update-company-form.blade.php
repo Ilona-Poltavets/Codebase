@@ -48,6 +48,12 @@
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
+            @if(config('services.stripe.billing_enabled', true))
+                <a href="{{ route('billing.index') }}"
+                   class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100">
+                    {{ __('Manage Billing') }}
+                </a>
+            @endif
 
             @if (session('status') === 'company-updated')
                 <p
